@@ -19,7 +19,7 @@ export class DemoStore implements DashboardStore {
   save(dashboard: Dashboard): Promise<Dashboard> {
     const current = this.dashboards.get(dashboard.id);
     if (current && current.version !== dashboard.version) {
-      return Promise.reject(new Error('Someone else saved this dashboard'));
+      return Promise.reject(Object.assign(new Error('Someone else saved this dashboard'), { conflict: true }));
     }
     const saved = { ...structuredClone(dashboard), version: dashboard.version + 1, updatedAt: new Date().toISOString() };
     this.dashboards.set(saved.id, saved);

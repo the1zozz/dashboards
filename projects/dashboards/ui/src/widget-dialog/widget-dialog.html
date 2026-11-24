@@ -1,0 +1,23 @@
+<header class="dash-dialog-head">
+  <h2 id="dash-widget-dialog-title">{{ heading() }}</h2>
+  <button type="button" class="dash-icon-button" [attr.aria-label]="i18n.t('add.close')" [title]="i18n.t('add.close')" (click)="close()">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+  </button>
+</header>
+
+@if (chosen(); as type) {
+  <dash-widget-builder [type]="type" [initial]="initial()" [filters]="data.filters" [canGoBack]="!data.widget"
+                       (done)="finish($event)" (cancelled)="close()" (back)="chosen.set(null)" />
+} @else {
+  <ul class="dash-types">
+    @for (type of types; track type.type) {
+      <li>
+        <button type="button" class="dash-type" (click)="chosen.set(type)">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path [attr.d]="type.icon" /></svg>
+          <span class="dash-type-name">{{ i18n.t(type.label) }}</span>
+          <span class="dash-type-text">{{ i18n.t(type.description) }}</span>
+        </button>
+      </li>
+    }
+  </ul>
+}

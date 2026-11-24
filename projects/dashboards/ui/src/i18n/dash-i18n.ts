@@ -1,5 +1,5 @@
 import { computed, EnvironmentInjector, inject, Injectable, runInInjectionContext } from '@angular/core';
-import { DASHBOARD_LANGUAGE } from '../contract/plugins';
+import { DASHBOARD_LANGUAGE } from '@integralways/dashboards';
 import { Language, MESSAGES, MessageKey } from './messages';
 
 /**
@@ -17,10 +17,14 @@ export class DashI18n {
   /** Arabic with Arabic-Indic digits, as the rest of an Arabic page. */
   private readonly locale = computed(() => (this.language() === 'ar' ? 'ar-EG' : 'en-US'));
 
-  /** The text for {@link key}; a widget type's own label (not a package key) is returned as it is. */
-  t(key: MessageKey | string): string {
+  /**
+   * The text for {@link key}, with {name} placeholders filled from {@link params}. A widget type's own label (not a
+   * package key) is returned as it is.
+   */
+  t(key: MessageKey | string, params?: Record<string, string | number>): string {
     const messages = MESSAGES[this.language()] as Record<string, string>;
-    return messages[key] ?? key;
+    const text = messages[key] ?? key;
+    return params ? text.replace(/\{(\w+)\}/g, (all, name: string) => (name in params ? String(params[name]) : all)) : text;
   }
 
   number(value: number, options?: Intl.NumberFormatOptions): string {

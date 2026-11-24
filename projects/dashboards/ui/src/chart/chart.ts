@@ -14,7 +14,7 @@ import { BarChart, LineChart } from 'echarts/charts';
 import { GridComponent, LegendComponent, TooltipComponent } from 'echarts/components';
 import { ECharts, EChartsCoreOption, init, use } from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
-import { DashI18n } from '@integralways/dashboards';
+import { DashI18n } from '../i18n/dash-i18n';
 
 use([LineChart, BarChart, GridComponent, TooltipComponent, LegendComponent, CanvasRenderer]);
 

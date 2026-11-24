@@ -9,8 +9,8 @@ reviewed against this file; behaviour that is not here is not promised.
 
 | Import | What it holds | Where to import it |
 |---|---|---|
-| `@integralways/dashboards` | The model, the plug-in interfaces, `provideDashboards`, languages, query helpers | Anywhere, including the app config. It carries no grid and no charts. |
-| `@integralways/dashboards/ui` | The components: `<dash-board>`, the widgets, the chart | Only from a lazy route or a `@defer` block. It brings the grid and ECharts (about 175 kB compressed), which the app's first download should not carry. |
+| `@integralways/dashboards` | The model, the plug-in interfaces, `provideDashboards`, query and layout helpers | Anywhere, including the app config. It carries no grid, no charts and no texts. |
+| `@integralways/dashboards/ui` | The components (`<dash-board>`, the widgets, the builder, the chart) and their English and Arabic texts | Only from a lazy route or a `@defer` block. It brings the grid and ECharts (about 175 kB compressed), which the app's first download should not carry. |
 
 ## 2. The five plug-in points
 
@@ -31,7 +31,9 @@ Every method may answer with a `Promise` or an `Observable` (its first value is 
 
 1. **`DashboardStore`**: `list`, `get`, `save`, `create`, `remove`, `copy`, `share`. `save` must refuse (reject) a
    dashboard whose `version` is not the latest one saved, and must increment `version` on success: two people editing
-   the same dashboard must not silently overwrite each other.
+   the same dashboard must not silently overwrite each other. Reject that case with an error carrying `status: 409`
+   (an Angular `HttpErrorResponse` does) or `conflict: true`, so the editor can say "someone else saved" rather than
+   "the save failed".
 2. **`WidgetDataSource`**: `run(query, context)` answers one `QueryDocument` with a `WidgetResult`. The package has
    already added the dashboard's filters to the query (section 4). The project enforces its own limits (time, rows, a
    cap per user) and answers `{ kind: 'noAccess' }` for data the user may not see: the widget then says so, and the rest

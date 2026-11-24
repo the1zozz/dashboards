@@ -1,0 +1,128 @@
+:host {
+  display: block;
+}
+
+.dash-select-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--dash-space-2);
+  inline-size: 100%;
+  min-block-size: 40px;
+  padding: 0 var(--dash-space-3);
+  border: 1px solid var(--dash-line);
+  border-radius: var(--dash-radius-sm);
+  background: var(--dash-surface);
+  color: var(--dash-ink);
+  font: inherit;
+  font-size: var(--dash-text-sm);
+  text-align: start;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    border-color: var(--dash-accent);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--dash-accent);
+    outline-offset: 1px;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &.is-invalid {
+    border-color: var(--dash-bad);
+  }
+
+  svg {
+    flex: none;
+    inline-size: 16px;
+    block-size: 16px;
+    fill: none;
+    stroke: var(--dash-muted);
+    stroke-width: 2;
+    transition: transform 0.15s;
+
+    &.is-open {
+      transform: rotate(180deg);
+    }
+  }
+}
+
+.dash-select-value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  &.is-placeholder {
+    color: var(--dash-muted);
+  }
+}
+
+.dash-select-panel {
+  max-block-size: 320px;
+  overflow: auto;
+  padding: var(--dash-space-1);
+  border: 1px solid var(--dash-line);
+  border-radius: var(--dash-radius-sm);
+  background: var(--dash-surface);
+  box-shadow: var(--dash-shadow-overlay);
+  font-family: var(--dash-font);
+  font-size: var(--dash-text-sm);
+  color: var(--dash-ink);
+}
+
+.dash-select-filter {
+  box-sizing: border-box;
+  inline-size: 100%;
+  min-block-size: 36px;
+  margin-block-end: var(--dash-space-1);
+  padding: 0 var(--dash-space-2);
+  border: 1px solid var(--dash-line);
+  border-radius: var(--dash-radius-sm);
+  background: var(--dash-surface);
+  color: var(--dash-ink);
+  font: inherit;
+}
+
+.dash-select-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.dash-select-option {
+  display: flex;
+  flex-direction: column;
+  padding: var(--dash-space-2) var(--dash-space-3);
+  border-radius: var(--dash-radius-sm);
+  cursor: pointer;
+
+  &:hover,
+  &.cdk-option-active {
+    background: var(--dash-accent-soft);
+  }
+
+  &[aria-selected='true'] {
+    color: var(--dash-accent);
+    font-weight: 600;
+  }
+}
+
+.dash-select-hint {
+  color: var(--dash-muted);
+  font-size: 0.75rem;
+  font-weight: 400;
+}
+
+.dash-select-none {
+  padding: var(--dash-space-2) var(--dash-space-3);
+  color: var(--dash-muted);
+}

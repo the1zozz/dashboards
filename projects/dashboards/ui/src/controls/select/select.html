@@ -1,0 +1,29 @@
+<button #trigger type="button" class="dash-select-trigger" cdkOverlayOrigin #origin="cdkOverlayOrigin"
+        [id]="id" [disabled]="disabled()" [class.is-invalid]="invalid()" [attr.aria-label]="label()"
+        aria-haspopup="listbox" [attr.aria-expanded]="open()" (click)="toggle()"
+        (keydown.arrowDown)="$event.preventDefault(); open() || toggle()">
+  <span class="dash-select-value" [class.is-placeholder]="!selected()"><bdi>{{ selected()?.label ?? placeholder() }}</bdi></span>
+  <svg viewBox="0 0 24 24" aria-hidden="true" [class.is-open]="open()"><path d="M6 9l6 6 6-6" /></svg>
+</button>
+
+<ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="origin" [cdkConnectedOverlayOpen]="open()"
+             [cdkConnectedOverlayPositions]="positions" [cdkConnectedOverlayMinWidth]="width()"
+             (overlayOutsideClick)="close()" (detach)="open.set(false)" (overlayKeydown)="$event.key === 'Escape' && close()">
+  <div class="dash-select-panel" [attr.dir]="i18n.dir()">
+    @if (filterable()) {
+      <input class="dash-select-filter" type="search" [attr.aria-label]="i18n.t('select.filter')" [placeholder]="i18n.t('select.filter')"
+             [value]="filter()" (input)="filter.set($any($event.target).value)" (keydown.escape)="close()" cdkFocusInitial />
+    }
+    <ul cdkListbox [cdkListboxValue]="value() === null ? [] : [value()!]" (cdkListboxValueChange)="choose($event)"
+        [attr.aria-label]="label()" class="dash-select-list">
+      @for (option of shown(); track option.value) {
+        <li [cdkOption]="option.value" class="dash-select-option">
+          <bdi>{{ option.label }}</bdi>
+          @if (option.hint) {<span class="dash-select-hint">{{ option.hint }}</span>}
+        </li>
+      } @empty {
+        <li class="dash-select-none" aria-disabled="true">{{ i18n.t('select.none') }}</li>
+      }
+    </ul>
+  </div>
+</ng-template>
