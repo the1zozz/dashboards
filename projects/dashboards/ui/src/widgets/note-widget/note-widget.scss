@@ -1,0 +1,14 @@
+:host {
+  display: block;
+  block-size: 100%;
+  overflow: auto;
+  color: var(--dash-ink);
+  font-size: var(--dash-text-sm);
+  line-height: 1.6;
+}
+
+p {
+  margin: 0 0 var(--dash-space-2);
+  max-inline-size: 70ch;
+  white-space: pre-line;
+}

@@ -1,0 +1,14 @@
+@if (value(); as v) {
+  <div class="dash-figure">
+    <bdi>{{ i18n.number(v.value) }}</bdi>
+    @if (unit()) {<span class="dash-unit">{{ unit() }}</span>}
+  </div>
+  @if (change(); as c) {
+    <div class="dash-change" [attr.data-tone]="tone()">
+      <svg viewBox="0 0 24 24" aria-hidden="true" [class.is-down]="!up()"><path d="M12 19V5M6 11l6-6 6 6" /></svg>
+      <bdi>{{ c }}</bdi> <span class="dash-muted">{{ i18n.t('widget.vsPrevious') }}</span>
+    </div>
+  } @else if (v.previous === 0) {
+    <div class="dash-change dash-muted">{{ i18n.t('widget.noPrevious') }}</div>
+  }
+}

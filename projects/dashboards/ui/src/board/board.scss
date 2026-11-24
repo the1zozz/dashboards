@@ -1,0 +1,59 @@
+:host {
+  display: block;
+  font-family: var(--dash-font);
+  color: var(--dash-ink);
+}
+
+/* The grid takes the height its rows need; the page scrolls, not the grid. On a phone the widgets stack. */
+.dash-grid {
+  display: block;
+  inline-size: 100%;
+  block-size: var(--dash-grid-height);
+  background: transparent;
+  overflow: visible;
+
+  &.mobile {
+    block-size: auto;
+  }
+}
+
+/* The frame inside draws the card: gridster's own white item background would show at its rounded corners. */
+gridster-item {
+  background: transparent;
+  overflow: visible;
+}
+
+.dash-board-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--dash-space-3);
+  padding: var(--dash-space-8) var(--dash-space-4);
+  color: var(--dash-muted);
+  text-align: center;
+
+  p {
+    margin: 0;
+  }
+}
+
+.dash-button {
+  min-block-size: 36px;
+  padding: 0 var(--dash-space-4);
+  border: 1px solid var(--dash-line);
+  border-radius: var(--dash-radius-sm);
+  background: var(--dash-surface);
+  color: var(--dash-ink);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover {
+    border-color: var(--dash-accent);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--dash-accent);
+    outline-offset: 2px;
+  }
+}

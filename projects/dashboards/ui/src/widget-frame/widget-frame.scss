@@ -1,0 +1,130 @@
+:host {
+  display: block;
+  block-size: 100%;
+}
+
+.dash-frame {
+  display: flex;
+  flex-direction: column;
+  block-size: 100%;
+  box-sizing: border-box;
+  padding: var(--dash-space-4);
+  background: var(--dash-surface);
+  border: 1px solid var(--dash-line);
+  border-radius: var(--dash-radius);
+  box-shadow: var(--dash-shadow);
+  overflow: hidden;
+}
+
+.dash-frame-title {
+  margin: 0 0 var(--dash-space-3);
+  font-size: var(--dash-text-sm);
+  font-weight: 600;
+  color: var(--dash-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dash-frame-body {
+  position: relative;
+  flex: 1;
+  min-block-size: 0;
+}
+
+.dash-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--dash-space-2);
+  block-size: 100%;
+  text-align: center;
+  font-size: var(--dash-text-sm);
+  color: var(--dash-muted);
+
+  p {
+    margin: 0;
+  }
+
+  svg {
+    inline-size: 22px;
+    block-size: 22px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+}
+
+.dash-link-button {
+  padding: var(--dash-space-1) var(--dash-space-2);
+  border: 0;
+  border-radius: var(--dash-radius-sm);
+  background: none;
+  color: var(--dash-accent);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--dash-accent-soft);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--dash-accent);
+    outline-offset: 2px;
+  }
+}
+
+.dash-code {
+  font-family: var(--dash-font-mono);
+}
+
+.dash-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dash-space-2);
+
+  span {
+    block-size: 12px;
+    border-radius: var(--dash-radius-sm);
+    background: var(--dash-skeleton);
+    animation: dash-pulse 1.4s ease-in-out infinite;
+
+    &:nth-child(1) {
+      inline-size: 60%;
+      block-size: 24px;
+    }
+
+    &:nth-child(2) {
+      inline-size: 90%;
+    }
+
+    &:nth-child(3) {
+      inline-size: 75%;
+    }
+  }
+}
+
+@keyframes dash-pulse {
+  50% {
+    opacity: 0.45;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dash-skeleton span {
+    animation: none;
+  }
+}
+
+.dash-visually-hidden {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

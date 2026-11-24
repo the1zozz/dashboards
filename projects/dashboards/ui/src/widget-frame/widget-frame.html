@@ -1,0 +1,34 @@
+<section class="dash-frame" [attr.aria-busy]="state() === 'loading'" [attr.aria-label]="widget().title">
+  @if (widget().title) {
+    <h3 class="dash-frame-title"><bdi>{{ widget().title }}</bdi></h3>
+  }
+  <div class="dash-frame-body">
+    @switch (state()) {
+      @case ('ready') {
+        <ng-container *ngComponentOutlet="type()!.component; inputs: { view: view() }" />
+      }
+      @case ('loading') {
+        <div class="dash-skeleton" aria-hidden="true"><span></span><span></span><span></span></div>
+        <span class="dash-visually-hidden">{{ i18n.t('board.loading') }}</span>
+      }
+      @case ('failed') {
+        <div class="dash-state">
+          <p>{{ i18n.t('widget.failed') }}</p>
+          <button type="button" class="dash-link-button" (click)="result.reload()">{{ i18n.t('widget.retry') }}</button>
+        </div>
+      }
+      @case ('noAccess') {
+        <div class="dash-state">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 11h12v9H6zM8 11V8a4 4 0 0 1 8 0v3" /></svg>
+          <p>{{ i18n.t('widget.noAccess') }}</p>
+        </div>
+      }
+      @case ('empty') {
+        <div class="dash-state"><p>{{ i18n.t('widget.noData') }}</p></div>
+      }
+      @default {
+        <div class="dash-state"><p>{{ i18n.t('widget.unknown') }} <bdi class="dash-code">{{ widget().type }}</bdi></p></div>
+      }
+    }
+  </div>
+</section>

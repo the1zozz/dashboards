@@ -1,0 +1,41 @@
+:host {
+  display: block;
+  block-size: 100%;
+  overflow: auto;
+}
+
+.dash-table {
+  inline-size: 100%;
+  border-collapse: collapse;
+  font-size: var(--dash-text-sm);
+
+  th {
+    position: sticky;
+    inset-block-start: 0;
+    padding: var(--dash-space-2);
+    background: var(--dash-surface);
+    color: var(--dash-muted);
+    font-weight: 600;
+    text-align: start;
+    border-block-end: 1px solid var(--dash-line);
+
+    &.is-number {
+      text-align: end;
+    }
+  }
+
+  td {
+    padding: var(--dash-space-2);
+    color: var(--dash-ink);
+    border-block-end: 1px solid var(--dash-line);
+
+    &.is-number {
+      text-align: end;
+      font-variant-numeric: tabular-nums;
+    }
+  }
+
+  tbody tr:last-child td {
+    border-block-end: 0;
+  }
+}

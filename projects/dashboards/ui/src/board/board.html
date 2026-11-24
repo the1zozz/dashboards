@@ -1,0 +1,20 @@
+@if (dashboard.error()) {
+  <div class="dash-board-state" role="alert">
+    <p>{{ i18n.t('board.failed') }}</p>
+    <button type="button" class="dash-button" (click)="dashboard.reload()">{{ i18n.t('board.retry') }}</button>
+  </div>
+} @else if (dashboard.hasValue() && dashboard.value(); as d) {
+  @if (d.widgets.length === 0) {
+    <div class="dash-board-state"><p>{{ i18n.t('board.empty') }}</p></div>
+  } @else {
+    <gridster [options]="options()" class="dash-grid" [style.--dash-grid-height.px]="height()">
+      @for (item of items(); track item.widget.id) {
+        <gridster-item [item]="item.cell">
+          <dash-widget-frame [widget]="item.widget" [filters]="d.filters" />
+        </gridster-item>
+      }
+    </gridster>
+  }
+} @else {
+  <div class="dash-board-state" aria-busy="true"><p>{{ i18n.t('board.loading') }}</p></div>
+}

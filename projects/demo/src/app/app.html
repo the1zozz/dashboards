@@ -1,0 +1,21 @@
+@let t = text();
+<header class="demo-header">
+  <div class="demo-heading">
+    <h1>{{ t.title }} <span class="demo-badge">{{ t.example }}</span></h1>
+    <p>{{ t.subtitle }}</p>
+  </div>
+  <div class="demo-controls">
+    <button type="button" class="demo-button" [attr.aria-label]="t.languageLabel" (click)="toggleLanguage()">{{ t.language }}</button>
+    <button type="button" class="demo-button" [attr.aria-label]="t.themeLabel" (click)="toggleTheme()">
+      {{ settings.theme() === 'light' ? t.dark : t.light }}
+    </button>
+  </div>
+</header>
+<main class="demo-main">
+  <!-- The board and its charts load in their own chunk, as on a lazy dashboards route in a real project. -->
+  @defer (on immediate) {
+    <dash-board id="weekly-health" />
+  } @placeholder {
+    <p class="demo-loading">…</p>
+  }
+</main>

@@ -1,0 +1,14 @@
+/* The demo page: the package's theme variables are used for the page itself too. */
+html {
+  background: var(--dash-page, #f6fafc);
+}
+
+html[data-theme='dark'] {
+  --dash-page: #0d1317;
+}
+
+body {
+  margin: 0;
+  font-family: var(--dash-font);
+  color: var(--dash-ink);
+}

@@ -1,0 +1,21 @@
+{
+  "name": "@integralways/dashboards",
+  "version": "0.1.0-dev",
+  "peerDependencies": {
+    "@angular/common": "^22.0.0",
+    "@angular/core": "^22.0.0",
+    "@angular/cdk": "^22.0.0",
+    "rxjs": "^7.8.0"
+  },
+  "sideEffects": false,
+  "exports": {
+    ".": "./src/public-api.ts",
+    "./ui": "./ui/src/public-api.ts"
+  },
+  "description": "Dashboards with dynamic widgets for any Angular app: a grid, an edit mode, a widget builder and sharing. The app plugs in where dashboards are saved and where the numbers come from.",
+  "dependencies": {
+    "angular-gridster2": "^22.0.0",
+    "echarts": "^6.1.0",
+    "tslib": "^2.3.0"
+  }
+}

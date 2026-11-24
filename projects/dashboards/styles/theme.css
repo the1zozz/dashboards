@@ -1,0 +1,73 @@
+/*
+ * @integralways/dashboards: the default theme. Every colour, size and font the package draws with is one of these
+ * variables, so a project maps its own design tokens onto them and nothing else:
+ *
+ *   :root { --dash-accent: var(--brand-primary); --dash-surface: var(--card-bg); ... }
+ *
+ * The defaults use :where() so any rule of the project wins. Dark values apply under [data-theme='dark'] or .dark on
+ * the page, or the reader's system setting when the page names no theme.
+ */
+:where(:root) {
+  --dash-font: 'IBM Plex Sans', 'Noto Sans Arabic', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --dash-font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  --dash-text-sm: 0.8125rem;
+  --dash-text-figure: 2rem;
+  --dash-space-1: 4px;
+  --dash-space-2: 8px;
+  --dash-space-3: 12px;
+  --dash-space-4: 16px;
+  --dash-space-8: 32px;
+  --dash-radius: 12px;
+  --dash-radius-sm: 6px;
+
+  --dash-surface: #ffffff;
+  --dash-ink: #252f36;
+  --dash-muted: #5d686f;
+  --dash-line: #e0e6ea;
+  --dash-skeleton: #edf1f4;
+  --dash-shadow: 0 1px 2px rgb(16 24 40 / 0.05);
+  --dash-accent: #2563ea;
+  --dash-accent-soft: #eaf1fe;
+  --dash-good: #13795b;
+  --dash-bad: #c0352b;
+  --dash-chart-1: #2563ea;
+  --dash-chart-2: #00948a;
+  --dash-chart-3: #df7b0c;
+  --dash-chart-4: #d4599b;
+}
+
+@media (prefers-color-scheme: dark) {
+  :where(:root:not([data-theme='light']):not(.light)) {
+    --dash-surface: #161d23;
+    --dash-ink: #e6ebef;
+    --dash-muted: #9aa6ae;
+    --dash-line: #2a343c;
+    --dash-skeleton: #222b32;
+    --dash-shadow: none;
+    --dash-accent: #6f9cff;
+    --dash-accent-soft: #1c2a44;
+    --dash-good: #4cc59b;
+    --dash-bad: #ff7b6e;
+    --dash-chart-1: #6f9cff;
+    --dash-chart-2: #2ec4b6;
+    --dash-chart-3: #f2a03d;
+    --dash-chart-4: #ec7fb8;
+  }
+}
+
+:where([data-theme='dark'], .dark) {
+  --dash-surface: #161d23;
+  --dash-ink: #e6ebef;
+  --dash-muted: #9aa6ae;
+  --dash-line: #2a343c;
+  --dash-skeleton: #222b32;
+  --dash-shadow: none;
+  --dash-accent: #6f9cff;
+  --dash-accent-soft: #1c2a44;
+  --dash-good: #4cc59b;
+  --dash-bad: #ff7b6e;
+  --dash-chart-1: #6f9cff;
+  --dash-chart-2: #2ec4b6;
+  --dash-chart-3: #f2a03d;
+  --dash-chart-4: #ec7fb8;
+}
