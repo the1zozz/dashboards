@@ -1,16 +1,66 @@
-@if (dashboard.error()) {
+@if (dashboard.error() && !session.editing()) {
   <div class="dash-board-state" role="alert">
     <p>{{ i18n.t('board.failed') }}</p>
     <button type="button" class="dash-button" (click)="dashboard.reload()">{{ i18n.t('board.retry') }}</button>
   </div>
-} @else if (dashboard.hasValue() && dashboard.value(); as d) {
+} @else if (shown(); as d) {
+  @if (header()) {
+    <header class="dash-board-head">
+      <div class="dash-board-title">
+        <h2><bdi>{{ d.name }}</bdi></h2>
+        @if (d.description) {<p><bdi>{{ d.description }}</bdi></p>}
+      </div>
+      <div class="dash-board-actions">
+        @if (session.editing()) {
+          @if (confirmingCancel()) {
+            <span class="dash-board-ask" role="alert">{{ i18n.t('board.discardQuestion') }}</span>
+            <button type="button" class="dash-button" (click)="confirmingCancel.set(false)">{{ i18n.t('board.keepEditing') }}</button>
+            <button type="button" class="dash-button is-danger" (click)="cancel()">{{ i18n.t('board.discard') }}</button>
+          } @else {
+            @if (session.dirty()) {<span class="dash-board-status">{{ i18n.t('board.unsaved') }}</span>}
+            <button type="button" class="dash-button" (click)="addWidget()">+ {{ i18n.t('board.addWidget') }}</button>
+            <button type="button" class="dash-button" [disabled]="!session.canUndo()" (click)="session.undo()">{{ i18n.t('board.undo') }}</button>
+            <button type="button" class="dash-button" (click)="cancel()">{{ i18n.t('board.cancel') }}</button>
+            <button type="button" class="dash-button is-primary" [disabled]="!session.dirty() || session.saving()" (click)="save()">
+              {{ i18n.t(session.saving() ? 'board.saving' : 'board.save') }}
+            </button>
+          }
+        } @else if (canEdit()) {
+          <button type="button" class="dash-button" (click)="edit()">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16zM14 6l4 4" /></svg>
+            {{ i18n.t('board.edit') }}
+          </button>
+        }
+      </div>
+    </header>
+  }
+
+  @if (session.problem(); as problem) {
+    <div class="dash-board-banner" role="alert">
+      <span>{{ i18n.t(problem === 'conflict' ? 'board.conflict' : 'board.saveFailed') }}</span>
+      @if (problem === 'conflict') {
+        <button type="button" class="dash-link-button" (click)="reloadTheirs()">{{ i18n.t('board.reload') }}</button>
+      }
+    </div>
+  }
+  @if (session.editing()) {
+    <p class="dash-board-hint">{{ i18n.t('board.editHint') }}</p>
+  }
+
   @if (d.widgets.length === 0) {
-    <div class="dash-board-state"><p>{{ i18n.t('board.empty') }}</p></div>
+    <div class="dash-board-state">
+      <p>{{ i18n.t(session.editing() ? 'board.emptyEdit' : 'board.empty') }}</p>
+      @if (session.editing()) {
+        <button type="button" class="dash-button is-primary" (click)="addWidget()">+ {{ i18n.t('board.addWidget') }}</button>
+      }
+    </div>
   } @else {
-    <gridster [options]="options()" class="dash-grid" [style.--dash-grid-height.px]="height()">
+    <gridster [options]="options()" class="dash-grid" [class.is-editing]="session.editing()" [style.--dash-grid-height.px]="height()">
       @for (item of items(); track item.widget.id) {
         <gridster-item [item]="item.cell">
-          <dash-widget-frame [widget]="item.widget" [filters]="d.filters" />
+          <dash-widget-frame [attr.data-widget]="item.widget.id" [widget]="item.widget" [filters]="d.filters" [editing]="session.editing()"
+                             (edit)="editWidget(item.widget)" (duplicate)="duplicate(item.widget)" (remove)="remove(item.widget)"
+                             (nudge)="nudge(item.widget, $event)" />
         </gridster-item>
       }
     </gridster>

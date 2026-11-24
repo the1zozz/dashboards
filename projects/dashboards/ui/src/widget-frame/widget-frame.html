@@ -1,5 +1,24 @@
 <section class="dash-frame" [attr.aria-busy]="state() === 'loading'" [attr.aria-label]="widget().title">
-  @if (widget().title) {
+  @if (editing()) {
+    <div class="dash-frame-bar dash-drag-handle">
+      <svg class="dash-grip" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h.01M15 6h.01M9 12h.01M15 12h.01M9 18h.01M15 18h.01" /></svg>
+      <h3 class="dash-frame-title"><bdi>{{ widget().title }}</bdi></h3>
+      <div class="dash-frame-tools">
+        <button type="button" class="dash-icon-button" [attr.aria-label]="i18n.t('widget.edit') + ': ' + widget().title"
+                [title]="i18n.t('widget.edit')" (click)="edit.emit()">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16zM14 6l4 4" /></svg>
+        </button>
+        <button type="button" class="dash-icon-button" [attr.aria-label]="i18n.t('widget.duplicate') + ': ' + widget().title"
+                [title]="i18n.t('widget.duplicate')" (click)="duplicate.emit()">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 8h11v11H8zM5 16V5h11" /></svg>
+        </button>
+        <button type="button" class="dash-icon-button is-danger" [attr.aria-label]="i18n.t('widget.remove') + ': ' + widget().title"
+                [title]="i18n.t('widget.remove')" (click)="remove.emit()">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3" /></svg>
+        </button>
+      </div>
+    </div>
+  } @else if (widget().title) {
     <h3 class="dash-frame-title"><bdi>{{ widget().title }}</bdi></h3>
   }
   <div class="dash-frame-body">

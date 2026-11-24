@@ -16,6 +16,7 @@
   --dash-space-2: 8px;
   --dash-space-3: 12px;
   --dash-space-4: 16px;
+  --dash-space-6: 24px;
   --dash-space-8: 32px;
   --dash-radius: 12px;
   --dash-radius-sm: 6px;
@@ -26,8 +27,13 @@
   --dash-line: #e0e6ea;
   --dash-skeleton: #edf1f4;
   --dash-shadow: 0 1px 2px rgb(16 24 40 / 0.05);
+  --dash-shadow-overlay: 0 8px 24px rgb(16 24 40 / 0.14);
+  --dash-backdrop: rgb(16 24 40 / 0.4);
   --dash-accent: #2563ea;
   --dash-accent-soft: #eaf1fe;
+  --dash-accent-ink: #ffffff;
+  --dash-bad-soft: #fdecea;
+  --dash-page-soft: #f1f5f8;
   --dash-good: #13795b;
   --dash-bad: #c0352b;
   --dash-chart-1: #2563ea;
@@ -44,8 +50,13 @@
     --dash-line: #2a343c;
     --dash-skeleton: #222b32;
     --dash-shadow: none;
+    --dash-shadow-overlay: 0 8px 24px rgb(0 0 0 / 0.5);
+    --dash-backdrop: rgb(0 0 0 / 0.6);
     --dash-accent: #6f9cff;
     --dash-accent-soft: #1c2a44;
+    --dash-accent-ink: #0d1317;
+    --dash-bad-soft: #3a1b19;
+    --dash-page-soft: #0f151a;
     --dash-good: #4cc59b;
     --dash-bad: #ff7b6e;
     --dash-chart-1: #6f9cff;
@@ -62,12 +73,121 @@
   --dash-line: #2a343c;
   --dash-skeleton: #222b32;
   --dash-shadow: none;
+  --dash-shadow-overlay: 0 8px 24px rgb(0 0 0 / 0.5);
+  --dash-backdrop: rgb(0 0 0 / 0.6);
   --dash-accent: #6f9cff;
   --dash-accent-soft: #1c2a44;
+  --dash-accent-ink: #0d1317;
+  --dash-bad-soft: #3a1b19;
+  --dash-page-soft: #0f151a;
   --dash-good: #4cc59b;
   --dash-bad: #ff7b6e;
   --dash-chart-1: #6f9cff;
   --dash-chart-2: #2ec4b6;
   --dash-chart-3: #f2a03d;
   --dash-chart-4: #ec7fb8;
+}
+
+/*
+ * The package's buttons, shared by every component (the board, a widget, the builder, dialogs). Low specificity:
+ * a project restyles them through the variables above.
+ */
+:where(.dash-button) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--dash-space-2);
+  min-block-size: 40px;
+  padding: 0 var(--dash-space-4);
+  border: 1px solid var(--dash-line);
+  border-radius: var(--dash-radius-sm);
+  background: var(--dash-surface);
+  color: var(--dash-ink);
+  font: inherit;
+  font-size: var(--dash-text-sm);
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+:where(.dash-button:hover:not(:disabled)) {
+  border-color: var(--dash-accent);
+}
+
+:where(.dash-button.is-primary) {
+  border-color: var(--dash-accent);
+  background: var(--dash-accent);
+  color: var(--dash-accent-ink);
+}
+
+:where(.dash-button.is-primary:hover:not(:disabled)) {
+  filter: brightness(1.08);
+}
+
+:where(.dash-button.is-quiet) {
+  border-color: transparent;
+  background: transparent;
+  color: var(--dash-accent);
+}
+
+:where(.dash-button.is-danger) {
+  border-color: var(--dash-bad);
+  background: var(--dash-bad);
+  color: var(--dash-accent-ink);
+}
+
+:where(.dash-button:disabled) {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+:where(.dash-link-button) {
+  align-self: flex-start;
+  padding: var(--dash-space-1) var(--dash-space-2);
+  border: 0;
+  border-radius: var(--dash-radius-sm);
+  background: none;
+  color: var(--dash-accent);
+  font: inherit;
+  font-size: var(--dash-text-sm);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+:where(.dash-link-button:hover) {
+  background: var(--dash-accent-soft);
+}
+
+:where(.dash-icon-button) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 36px;
+  block-size: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--dash-radius-sm);
+  background: transparent;
+  color: var(--dash-muted);
+  cursor: pointer;
+}
+
+:where(.dash-icon-button:hover) {
+  background: var(--dash-accent-soft);
+  color: var(--dash-accent);
+}
+
+:where(.dash-icon-button svg) {
+  inline-size: 18px;
+  block-size: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+:where(.dash-button, .dash-link-button, .dash-icon-button):focus-visible {
+  outline: 2px solid var(--dash-accent);
+  outline-offset: 2px;
 }

@@ -1,0 +1,158 @@
+@let d = draft();
+@let q = d.query;
+<div class="dash-builder">
+  <form class="dash-builder-form" (submit)="$event.preventDefault(); finish()" novalidate>
+    <label class="dash-field">
+      <span class="dash-label">{{ i18n.t('builder.name') }}</span>
+      <input class="dash-input" type="text" maxlength="120" [value]="d.title" [placeholder]="i18n.t('builder.namePlaceholder')"
+             (input)="setTitle($any($event.target).value)" />
+    </label>
+
+    @if (isNote()) {
+      <label class="dash-field">
+        <span class="dash-label">{{ i18n.t('builder.text') }}</span>
+        <textarea class="dash-input dash-textarea" rows="7" maxlength="4000" [value]="settingText('text')"
+                  (input)="setSetting('text', $any($event.target).value)"></textarea>
+        <span class="dash-hint">{{ i18n.t('builder.textHint') }}</span>
+      </label>
+    } @else if (q) {
+      @if (fields.error()) {
+        <p class="dash-problem" role="alert">{{ i18n.t('builder.catalogFailed') }}
+          <button type="button" class="dash-link-button" (click)="fields.reload()">{{ i18n.t('widget.retry') }}</button></p>
+      }
+      <fieldset class="dash-group">
+        <legend class="dash-label">{{ i18n.t('builder.measure') }}</legend>
+        <div class="dash-row">
+          <div class="dash-field">
+            <span class="dash-label is-small">{{ i18n.t('builder.aggregate') }}</span>
+            <dash-select [options]="aggregateOptions()" [value]="q.measure.aggregate" [label]="i18n.t('builder.aggregate')"
+                         (valueChange)="setMeasure({ aggregate: $any($event) })" />
+          </div>
+          <div class="dash-field is-wide">
+            <span class="dash-label is-small">{{ i18n.t('builder.of') }}</span>
+            <dash-select [options]="measurableOptions()" [value]="q.measure.of || null" [label]="i18n.t('builder.of')"
+                         [placeholder]="i18n.t('builder.choose')" [invalid]="tried() && !q.measure.of"
+                         (valueChange)="setMeasure({ of: $event ?? '' })" />
+          </div>
+        </div>
+        @if (needsField()) {
+          <div class="dash-field">
+            <span class="dash-label is-small">{{ i18n.t(q.measure.aggregate === 'unique' ? 'builder.fieldUnique' : 'builder.fieldSum') }}</span>
+            <dash-select [options]="measureFieldOptions()" [value]="q.measure.field ?? null" [disabled]="!q.measure.of"
+                         [label]="i18n.t(q.measure.aggregate === 'unique' ? 'builder.fieldUnique' : 'builder.fieldSum')"
+                         [placeholder]="i18n.t('builder.choose')" [invalid]="tried() && !q.measure.field"
+                         (valueChange)="setMeasure({ field: $event ?? undefined })" />
+          </div>
+        }
+      </fieldset>
+
+      @if (split() === 'time') {
+        <div class="dash-field">
+          <span class="dash-label">{{ i18n.t('builder.interval') }}</span>
+          <dash-select [options]="intervalOptions()" [value]="q.interval ?? null" [label]="i18n.t('builder.interval')"
+                       [invalid]="tried() && !q.interval" (valueChange)="setQuery({ interval: $any($event) })" />
+        </div>
+      } @else if (split() === 'field') {
+        <div class="dash-row">
+          <div class="dash-field is-wide">
+            <span class="dash-label">{{ i18n.t('builder.by') }}</span>
+            <dash-select [options]="fieldOptions()" [value]="q.by ?? null" [label]="i18n.t('builder.by')" [disabled]="!q.measure.of"
+                         [placeholder]="i18n.t('builder.choose')" [invalid]="tried() && !q.by" (valueChange)="setQuery({ by: $event ?? undefined })" />
+          </div>
+          <label class="dash-field is-narrow">
+            <span class="dash-label">{{ i18n.t('builder.limit') }}</span>
+            <input class="dash-input" type="number" min="1" max="100" inputmode="numeric" [value]="q.limit ?? ''"
+                   (change)="setLimit($any($event.target).value)" />
+          </label>
+        </div>
+      }
+
+      <fieldset class="dash-group">
+        <legend class="dash-label">{{ i18n.t('builder.conditions') }}</legend>
+        @for (c of q.where; track $index; let i = $index) {
+          <div class="dash-condition">
+            <dash-select [options]="fieldOptions()" [value]="c.field || null" [label]="i18n.t('builder.conditionField')"
+                         [placeholder]="i18n.t('builder.choose')" [invalid]="tried() && !c.field"
+                         (valueChange)="setCondition(i, { field: $event ?? '', value: '' })" />
+            <dash-select [options]="opOptions()" [value]="c.op" [label]="i18n.t('builder.conditionOp')" (valueChange)="setCondition(i, { op: $any($event) })" />
+            @if (valuesOf(c.field); as values) {
+              <dash-select [options]="values" [value]="c.value === '' ? null : $any(c.value)" [label]="i18n.t('builder.value')"
+                           [placeholder]="i18n.t('builder.choose')" [invalid]="tried() && c.value === ''"
+                           (valueChange)="setCondition(i, { value: $event ?? '' })" />
+            } @else {
+              <input class="dash-input" type="text" [attr.aria-label]="i18n.t('builder.value')" [value]="c.value"
+                     [class.is-invalid]="tried() && c.value === ''" (input)="setConditionValue(i, $any($event.target).value)" />
+            }
+            <button type="button" class="dash-icon-button" [attr.aria-label]="i18n.t('builder.removeCondition')"
+                    [title]="i18n.t('builder.removeCondition')" (click)="removeCondition(i)">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+            </button>
+          </div>
+        }
+        <button type="button" class="dash-link-button" (click)="addCondition()">+ {{ i18n.t('builder.addCondition') }}</button>
+      </fieldset>
+
+      <fieldset class="dash-group">
+        <legend class="dash-label">{{ i18n.t('builder.period') }}</legend>
+        <label class="dash-choice">
+          <input type="radio" name="dash-period" [checked]="!q.period" (change)="setOwnPeriod(false)" />
+          {{ i18n.t('builder.periodDashboard') }}
+        </label>
+        <div class="dash-choice-row">
+          <label class="dash-choice">
+            <input type="radio" name="dash-period" [checked]="!!q.period" (change)="setOwnPeriod(true)" />
+            {{ i18n.t('builder.periodOwn') }}
+          </label>
+          @if (q.period) {
+            <input class="dash-input is-number" type="number" min="1" max="365" [attr.aria-label]="i18n.t('builder.periodCount')"
+                   [value]="periodLast()" (change)="setPeriod({ last: +$any($event.target).value })" />
+            <dash-select class="is-unit" [options]="unitOptions()" [value]="periodUnit()" [label]="i18n.t('builder.periodUnit')"
+                         (valueChange)="setPeriod({ unit: $any($event) })" />
+          }
+        </div>
+      </fieldset>
+
+      @if (type().type === 'number') {
+        <fieldset class="dash-group">
+          <legend class="dash-label">{{ i18n.t('builder.display') }}</legend>
+          <label class="dash-field">
+            <span class="dash-label is-small">{{ i18n.t('builder.unit') }}</span>
+            <input class="dash-input" type="text" maxlength="12" [value]="settingText('unit')" [placeholder]="i18n.t('builder.unitPlaceholder')"
+                   (input)="setSetting('unit', $any($event.target).value)" />
+          </label>
+          <label class="dash-choice">
+            <input type="checkbox" [checked]="d.settings['higherIsBetter'] !== false" (change)="setSetting('higherIsBetter', $any($event.target).checked)" />
+            {{ i18n.t('builder.higherIsBetter') }}
+          </label>
+        </fieldset>
+      }
+    }
+
+    @if (tried() && problems().length) {
+      <ul class="dash-problem" role="alert">
+        @for (p of problems(); track p) {<li>{{ i18n.t(p) }}</li>}
+      </ul>
+    }
+
+    <div class="dash-actions">
+      @if (canGoBack()) {
+        <button type="button" class="dash-button is-quiet" (click)="back.emit()">{{ i18n.t('builder.back') }}</button>
+      }
+      <span class="dash-spacer"></span>
+      <button type="button" class="dash-button" (click)="cancelled.emit()">{{ i18n.t('builder.cancel') }}</button>
+      <button type="submit" class="dash-button is-primary">{{ i18n.t(initial() ? 'builder.apply' : 'builder.add') }}</button>
+    </div>
+  </form>
+
+  <aside class="dash-builder-preview" [attr.aria-label]="i18n.t('builder.preview')">
+    <span class="dash-label">{{ i18n.t('builder.preview') }}</span>
+    <div class="dash-preview-box">
+      @if (preview(); as w) {
+        <dash-widget-frame [widget]="w" [filters]="filters()" />
+      } @else {
+        <p class="dash-hint">{{ i18n.t('builder.previewWaiting') }}</p>
+      }
+    </div>
+    @if (!isNote()) {<span class="dash-hint">{{ i18n.t('builder.previewNote') }}</span>}
+  </aside>
+</div>

@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Build the package (both entry points)
+        run: npx ng build dashboards
+      - name: Unit tests
+        run: npx ng test dashboards --watch=false
+      - name: Build the demo (production budgets)
+        run: npx ng build demo

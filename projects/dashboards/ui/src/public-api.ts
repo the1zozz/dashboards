@@ -6,3 +6,9 @@ export { Board, GRID_COLUMNS, GRID_GAP, PHONE_WIDTH, ROW_HEIGHT } from './board/
 export { WidgetFrame } from './widget-frame/widget-frame';
 export { Chart, type ChartSpec } from './chart/chart';
 export { BUILT_IN_WIDGETS, WidgetRegistry } from './widgets/widget-registry';
+export { WidgetBuilder, type WidgetDraft } from './builder/widget-builder';
+export { WidgetDialog, type WidgetDialogData } from './widget-dialog/widget-dialog';
+export { Select, type SelectOption } from './controls/select/select';
+export { EditSession, type SaveProblem } from './board/edit-session';
+export { DashI18n } from './i18n/dash-i18n';
+export { MESSAGES, type Language, type MessageKey } from './i18n/messages';

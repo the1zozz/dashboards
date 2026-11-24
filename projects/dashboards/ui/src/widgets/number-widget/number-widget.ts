@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
-import { DashI18n, WidgetView } from '@integralways/dashboards';
+import { WidgetView } from '@integralways/dashboards';
+import { DashI18n } from '../../i18n/dash-i18n';
 
 /**
  * One figure, and how it changed against the previous period. Settings: {@code unit} (shown after the figure) and
