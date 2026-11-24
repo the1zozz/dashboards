@@ -6,6 +6,12 @@ from; the package knows nothing about any backend. What a project implements is 
 
 ## Use it
 
+0. Install it from the release (it is not on npm):
+
+   ```sh
+   npm install https://github.com/the1zozz/dashboards/releases/download/0.1.0/integralways-dashboards-0.1.0.tgz
+   ```
+
 1. Add the theme to `angular.json` styles, and map your tokens onto it:
 
    ```json
