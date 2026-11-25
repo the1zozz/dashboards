@@ -14,7 +14,7 @@
             @if (isNumber(cell)) {
               <td class="is-number">{{ i18n.number(cell) }}</td>
             } @else {
-              <td><bdi>{{ cell ?? '—' }}</bdi></td>
+              <td class="is-text" [title]="cell ?? ''"><bdi>{{ cell ?? '—' }}</bdi></td>
             }
           }
         </tr>

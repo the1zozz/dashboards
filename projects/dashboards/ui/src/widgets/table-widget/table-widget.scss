@@ -21,6 +21,7 @@
 
     &.is-number {
       text-align: end;
+      white-space: nowrap;
     }
   }
 
@@ -32,6 +33,17 @@
     &.is-number {
       text-align: end;
       font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    /* Text takes the room the numbers leave and is cut short with an ellipsis (the whole value on hover): a long
+       value (an id, a hashed value) must not push the numbers out of the widget. */
+    &.is-text {
+      inline-size: 100%;
+      max-inline-size: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
 

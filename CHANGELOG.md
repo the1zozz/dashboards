@@ -3,6 +3,12 @@
 `@integralways/dashboards`. Each version is released once, from a tag named after it (`0.1.0`), with the package
 attached to the GitHub release. The contract a project implements is versioned separately in CONTRACT.md.
 
+## 0.2.1 · 25 November 2026
+
+- **Long values no longer push numbers out of a widget.** A Table cuts long text short with an ellipsis (the whole
+  value on hover) and keeps its number columns in view; a Breakdown cuts long bar labels at 140 px. Found with a split
+  by a field whose values are hashed for privacy (64 characters).
+
 ## 0.2.0 · 25 November 2026
 
 Phase 1, step 3: the filter bar. Contract 0.1 (draft), no change to the model or the plug-ins.
