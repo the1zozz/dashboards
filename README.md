@@ -19,7 +19,7 @@ npx ng test dashboards    # tests
 Install a release (the package is attached to each GitHub release):
 
 ```bash
-npm install https://github.com/the1zozz/dashboards/releases/download/0.2.1/integralways-dashboards-0.2.1.tgz
+npm install https://github.com/the1zozz/dashboards/releases/download/0.3.0/integralways-dashboards-0.3.0.tgz
 ```
 
 Then add the theme to the app's global styles in `angular.json`, before the app's own stylesheet, and map your design

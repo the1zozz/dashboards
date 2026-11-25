@@ -3,7 +3,7 @@
 `@integralways/dashboards`. Each version is released once, from a tag named after it (`0.1.0`), with the package
 attached to the GitHub release. The contract a project implements is versioned separately in CONTRACT.md.
 
-## Unreleased
+## 0.3.0 · 25 November 2026
 
 Phase 1, step 4: the list of dashboards and sharing in the package. Contract 0.2: `DashboardAccess.canRemove`
 (optional) and the list (section 7).
