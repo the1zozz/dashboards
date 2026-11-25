@@ -19,7 +19,7 @@ npx ng test dashboards    # tests
 Install a release (the package is attached to each GitHub release):
 
 ```bash
-npm install https://github.com/the1zozz/dashboards/releases/download/0.2.1/integralways-dashboards-0.2.1.tgz
+npm install https://github.com/the1zozz/dashboards/releases/download/0.3.0/integralways-dashboards-0.3.0.tgz
 ```
 
 Then add the theme to the app's global styles in `angular.json`, before the app's own stylesheet, and map your design
@@ -31,4 +31,13 @@ tokens onto the `--dash-*` variables (CONTRACT.md, section 6):
 
 `ng serve` reads `angular.json` only when it starts: restart it after adding the theme, or the dashboards draw with
 the browser's plain buttons and no spacing.
+
+The two components a project's pages use (CONTRACT.md, sections 6 and 7):
+
+```html
+<!-- The list page -->
+<dash-dashboard-list [link]="href" (open)="go($event)" />
+<!-- A dashboard's page -->
+<dash-board [id]="id" [startEditing]="edit" (copied)="openToEdit($event.id)" (removed)="backToList()" />
+```
 

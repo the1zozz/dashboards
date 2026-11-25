@@ -17,6 +17,13 @@
 .dash-board-title {
   min-inline-size: 0;
 
+  .dash-board-name {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--dash-space-2) var(--dash-space-3);
+  }
+
   h2 {
     margin: 0;
     font-size: var(--dash-text-title);
@@ -45,6 +52,14 @@
     stroke-width: 2;
     stroke-linecap: round;
     stroke-linejoin: round;
+  }
+}
+
+.dash-button.dash-board-more {
+  padding-inline: var(--dash-space-3);
+
+  svg.dash-dots {
+    stroke-width: 3.2;
   }
 }
 

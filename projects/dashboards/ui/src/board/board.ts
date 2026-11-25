@@ -1,5 +1,6 @@
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { Dialog } from '@angular/cdk/dialog';
+import { CdkMenu, CdkMenuItem, CdkMenuTrigger } from '@angular/cdk/menu';
 import { ChangeDetectionStrategy, Component, computed, effect, ElementRef, inject, input, linkedSignal, output, resource, signal, untracked } from '@angular/core';
 import { Gridster, GridsterItem } from 'angular-gridster2';
 import {
@@ -7,7 +8,6 @@ import {
   applyPositions,
   COLUMNS,
   Dashboard,
-  DASHBOARD_ACCESS,
   DashboardFilters,
   DASHBOARD_STORE,
   duplicateWidget,
@@ -19,12 +19,14 @@ import {
   updateWidget,
   Widget,
 } from '@integralways/dashboards';
+import { DashboardActions } from '../actions/dashboard-actions';
 import { FilterBar } from '../filter-bar/filter-bar';
 import { DashI18n } from '../i18n/dash-i18n';
 import { WidgetDraft } from '../builder/widget-builder';
 import { WidgetDialog, WidgetDialogData } from '../widget-dialog/widget-dialog';
 import { WidgetFrame } from '../widget-frame/widget-frame';
 import { WidgetRegistry } from '../widgets/widget-registry';
+import { VisibilityBadge } from '../visibility-badge/visibility-badge';
 import { EditSession } from './edit-session';
 
 /** Columns of the grid: positions in the model are in these. */
@@ -46,12 +48,14 @@ interface Item {
  * A dashboard: loaded from the project's store and laid out on a 12-column grid, mirrored in right-to-left languages,
  * one column on a phone. Those the project allows can edit it: add, build, move, resize, duplicate and remove widgets,
  * by mouse or keyboard, with Undo, then save. Above the grid, the filter bar: a reader's changes to it are theirs alone
- * (until Reset), an editor's are saved with the dashboard. Usage: {@code <dash-board [id]="dashboardId" />}; the page's
- * own actions (share, delete …) go in the header's row as content marked {@code dashActions}.
+ * (until Reset), an editor's are saved with the dashboard. Beside the title, who can see it; in the header, Share and
+ * More (copy, delete) for those allowed. The page goes where {@link copied} and {@link removed} say. Usage:
+ * {@code <dash-board [id]="dashboardId" (removed)="back()" />}; the page's own actions go in the header's row as
+ * content marked {@code dashActions}.
  */
 @Component({
   selector: 'dash-board',
-  imports: [Gridster, GridsterItem, WidgetFrame, FilterBar],
+  imports: [Gridster, GridsterItem, WidgetFrame, FilterBar, VisibilityBadge, CdkMenu, CdkMenuItem, CdkMenuTrigger],
   providers: [EditSession],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './board.html',
@@ -73,11 +77,17 @@ export class Board {
   readonly filters = input<DashboardFilters | undefined>(undefined);
   /** The reader changed the filters (the page may keep them in its address); undefined when back to the saved ones. */
   readonly filtersChange = output<DashboardFilters | undefined>();
+  /** Show Share and More (copy, delete) in the header to those allowed. */
+  readonly actions = input(true);
+  /** A copy was made (from More): the page usually opens it. */
+  readonly copied = output<Dashboard>();
+  /** It was deleted (from More): the page goes back to the list. */
+  readonly removed = output<string>();
 
   protected readonly i18n = inject(DashI18n);
   protected readonly session = inject(EditSession);
   private readonly store = inject(DASHBOARD_STORE);
-  private readonly access = inject(DASHBOARD_ACCESS);
+  protected readonly can = inject(DashboardActions);
   private readonly registry = inject(WidgetRegistry);
   private readonly dialog = inject(Dialog);
   private readonly announcer = inject(LiveAnnouncer);
@@ -96,8 +106,10 @@ export class Board {
     this.session.draft() ?? (this.dashboard.hasValue() ? this.dashboard.value() : undefined));
   protected readonly canEdit = computed(() => {
     const d = this.dashboard.hasValue() ? this.dashboard.value() : undefined;
-    return !!d && this.access.canEdit(d);
+    return !!d && this.can.canEdit(d);
   });
+  /** The saved dashboard, for the header's Share and More. */
+  protected readonly saved = computed(() => (this.dashboard.hasValue() ? this.dashboard.value() : undefined));
   /** The filters every widget gets now: the working copy's while editing, else the reader's, else the saved ones. */
   protected readonly activeFilters = computed<DashboardFilters | undefined>(() => {
     const draft = this.session.draft();
@@ -173,6 +185,29 @@ export class Board {
         untracked(() => this.edit());
       }
     });
+  }
+
+  // ------------------------------------------------------------------ the whole dashboard
+
+  protected async share(d: Dashboard): Promise<void> {
+    const saved = await this.can.share(d);
+    if (saved) {
+      // The store answers with the whole dashboard; keep the widgets shown if a store answers with less.
+      this.dashboard.set({ ...d, ...saved, widgets: saved.widgets ?? d.widgets, filters: saved.filters ?? d.filters });
+    }
+  }
+
+  protected async copy(d: Dashboard): Promise<void> {
+    const made = await this.can.copy(d);
+    if (made) {
+      this.copied.emit(made);
+    }
+  }
+
+  protected async removeDashboard(d: Dashboard): Promise<void> {
+    if (await this.can.remove(d)) {
+      this.removed.emit(d.id);
+    }
   }
 
   // ------------------------------------------------------------------ editing

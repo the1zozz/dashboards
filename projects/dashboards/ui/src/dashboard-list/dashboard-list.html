@@ -1,0 +1,60 @@
+<div class="dash-list-bar">
+  <div class="dash-list-search">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4" /></svg>
+    <input type="search" class="dash-input" autocomplete="off" [value]="query()" [placeholder]="i18n.t('list.search')"
+           [attr.aria-label]="i18n.t('list.search')" (input)="query.set($any($event.target).value)" />
+  </div>
+  <div class="dash-list-scopes" role="group" [attr.aria-label]="i18n.t('list.scope')">
+    @for (s of scopes; track s) {
+      <button type="button" class="dash-list-scope" [attr.aria-pressed]="scope() === s" (click)="scope.set(s)">
+        {{ i18n.t('list.' + s) }}
+        @if (dashboards.hasValue()) {<span class="dash-list-count">{{ i18n.number(counts()[s]) }}</span>}
+      </button>
+    }
+  </div>
+  @if (createButton() && actions.canCreate()) {
+    <button type="button" class="dash-button is-primary dash-list-new" (click)="create()">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+      {{ i18n.t('list.new') }}
+    </button>
+  }
+</div>
+
+@if (dashboards.error()) {
+  <div class="dash-list-state" role="alert">
+    <p>{{ i18n.t('list.failed') }}</p>
+    <button type="button" class="dash-button" (click)="dashboards.reload()">{{ i18n.t('board.retry') }}</button>
+  </div>
+} @else if (dashboards.hasValue()) {
+  @if (counts().all === 0) {
+    <div class="dash-list-state is-empty">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h7v9H4zM13 4h7v5h-7zM13 11h7v9h-7zM4 15h7v5H4z" /></svg>
+      <h3>{{ i18n.t('list.emptyTitle') }}</h3>
+      <p>{{ i18n.t(actions.canCreate() ? 'list.emptyCreate' : 'list.emptyRead') }}</p>
+      @if (actions.canCreate()) {
+        <button type="button" class="dash-button is-primary" (click)="create()">+ {{ i18n.t('list.new') }}</button>
+      }
+    </div>
+  } @else if (shown().length === 0) {
+    <div class="dash-list-state" role="status">
+      <p>{{ query().trim() ? i18n.t('list.noMatch', { query: query().trim() }) : i18n.t('list.noneHere') }}</p>
+      <button type="button" class="dash-link-button" (click)="clear()">{{ i18n.t('list.clear') }}</button>
+    </div>
+  } @else {
+    <ul class="dash-cards" [attr.aria-label]="i18n.t('list.label')">
+      @for (d of shown(); track d.id) {
+        <li>
+          <dash-dashboard-card [dashboard]="d" [href]="href(d.id)" (opened)="follow($event.event, d.id, $event.edit)"
+                               (copy)="copy(d)" (share)="share(d)" (remove)="remove(d)" />
+        </li>
+      }
+    </ul>
+  }
+} @else {
+  <ul class="dash-cards" aria-busy="true">
+    @for (i of [1, 2, 3]; track i) {
+      <li class="dash-skeleton-card" aria-hidden="true"><span></span><span></span><span></span></li>
+    }
+  </ul>
+  <span class="dash-visually-hidden" role="status">{{ i18n.t('list.loading') }}</span>
+}

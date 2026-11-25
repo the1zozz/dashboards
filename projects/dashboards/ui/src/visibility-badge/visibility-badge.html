@@ -1,0 +1,5 @@
+<span class="dash-badge" [class.is-shared]="kind() !== 'private'" [title]="i18n.t('visibility.' + kind() + 'Hint')">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path [attr.d]="icon()" /></svg>
+  {{ i18n.t('visibility.' + kind()) }}
+  <span class="dash-badge-hint">{{ i18n.t('visibility.' + kind() + 'Hint') }}</span>
+</span>

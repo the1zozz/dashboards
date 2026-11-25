@@ -1,0 +1,9 @@
+:host {
+  display: block;
+}
+
+textarea.dash-input {
+  min-block-size: 64px;
+  padding-block: var(--dash-space-2);
+  resize: vertical;
+}

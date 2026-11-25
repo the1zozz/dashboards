@@ -1,0 +1,46 @@
+@let d = dashboard();
+<article class="dash-card">
+  <div class="dash-card-head">
+    <span class="dash-card-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path d="M4 4h7v9H4zM13 4h7v5h-7zM13 11h7v9h-7zM4 15h7v5H4z" /></svg>
+    </span>
+    <h3 class="dash-card-name">
+      @if (href(); as url) {
+        <a class="dash-card-link" [href]="url" (click)="opened.emit({ event: $event, edit: false })"><bdi>{{ d.name }}</bdi></a>
+      } @else {
+        <button type="button" class="dash-card-link" (click)="opened.emit({ event: $event, edit: false })"><bdi>{{ d.name }}</bdi></button>
+      }
+    </h3>
+    <button type="button" class="dash-icon-button dash-card-menu" [cdkMenuTriggerFor]="menu"
+            [attr.aria-label]="i18n.t('list.actions', { name: d.name })" [title]="i18n.t('board.more')">
+      <svg class="dash-dots" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6h.01M12 12h.01M12 18h.01" /></svg>
+    </button>
+  </div>
+  @if (d.description) {<p class="dash-card-text"><bdi>{{ d.description }}</bdi></p>}
+  <div class="dash-card-foot">
+    <dash-visibility-badge [dashboard]="d" />
+    <span class="dash-card-meta">
+      @if (d.ownerName) {<bdi>{{ d.ownerName }}</bdi><span aria-hidden="true"> · </span>}
+      <time [attr.datetime]="d.updatedAt" [title]="i18n.dateTime(d.updatedAt)">{{ i18n.t('list.updated', { when: i18n.ago(d.updatedAt) }) }}</time>
+    </span>
+  </div>
+</article>
+
+<ng-template #menu>
+  <div class="dash-menu" cdkMenu [attr.dir]="i18n.dir()">
+    <button type="button" class="dash-menu-item" cdkMenuItem (cdkMenuItemTriggered)="opened.emit({ event: null, edit: false })">{{ i18n.t('list.open') }}</button>
+    @if (actions.canEdit(d)) {
+      <button type="button" class="dash-menu-item" cdkMenuItem (cdkMenuItemTriggered)="opened.emit({ event: null, edit: true })">{{ i18n.t('list.edit') }}</button>
+    }
+    @if (actions.canCreate()) {
+      <button type="button" class="dash-menu-item" cdkMenuItem (cdkMenuItemTriggered)="copy.emit()">{{ i18n.t('list.copy') }}</button>
+    }
+    @if (actions.canShare(d)) {
+      <button type="button" class="dash-menu-item" cdkMenuItem (cdkMenuItemTriggered)="share.emit()">{{ i18n.t('list.share') }}</button>
+    }
+    @if (actions.canRemove(d)) {
+      <hr class="dash-menu-line" />
+      <button type="button" class="dash-menu-item is-danger" cdkMenuItem (cdkMenuItemTriggered)="remove.emit()">{{ i18n.t('list.delete') }}</button>
+    }
+  </div>
+</ng-template>

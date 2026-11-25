@@ -1,0 +1,31 @@
+<form class="dash-dialog" (submit)="$event.preventDefault(); save()">
+  <header class="dash-dialog-head">
+    <h2 id="dash-share-title"><bdi>{{ i18n.t('share.title', { name: dashboard.name }) }}</bdi></h2>
+    <button type="button" class="dash-icon-button" [attr.aria-label]="i18n.t('add.close')" [title]="i18n.t('add.close')" (click)="close()">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+    </button>
+  </header>
+
+  <fieldset class="dash-share-choices">
+    <legend>{{ i18n.t('share.label') }}</legend>
+    @for (c of choices; track c.value) {
+      <label class="dash-share-choice" [class.is-chosen]="chosen() === c.value">
+        <input type="radio" name="dash-share-visibility" [value]="c.value" [checked]="chosen() === c.value" (change)="chosen.set(c.value)" />
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path [attr.d]="c.icon" /></svg>
+        <span class="dash-share-text">
+          <span class="dash-share-name">{{ i18n.t('share.' + c.value) }}</span>
+          <span class="dash-share-hint">{{ i18n.t('share.' + c.value + 'Text') }}</span>
+        </span>
+      </label>
+    }
+  </fieldset>
+
+  @if (failed()) {
+    <p class="dash-dialog-error" role="alert">{{ i18n.t('share.failed') }}</p>
+  }
+
+  <div class="dash-dialog-actions">
+    <button type="button" class="dash-button" (click)="close()">{{ i18n.t('form.cancel') }}</button>
+    <button type="submit" class="dash-button is-primary" [disabled]="busy()">{{ i18n.t(busy() ? 'form.working' : 'share.save') }}</button>
+  </div>
+</form>

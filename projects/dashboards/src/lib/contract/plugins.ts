@@ -60,6 +60,8 @@ export interface DashboardAccess {
   canCreate(): boolean;
   canEdit(dashboard: DashboardSummary): boolean;
   canShare(dashboard: DashboardSummary): boolean;
+  /** Whether the user may delete it. Optional: without it, those who may share a dashboard may delete it. */
+  canRemove?(dashboard: DashboardSummary): boolean;
 }
 
 /** A widget type: the built-in ones and a project's own. */

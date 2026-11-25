@@ -3,7 +3,7 @@
 What a project implements to use `@integralways/dashboards`, and what the package promises in return. Projects are
 reviewed against this file; behaviour that is not here is not promised.
 
-**Version 0.1 · 2026-11-24** (draft: changes freely until 1.0).
+**Version 0.2 · 2026-11-25** (draft: changes freely until 1.0). 0.2 adds the optional `canRemove` and the list.
 
 ## 1. Two entry points
 
@@ -40,8 +40,10 @@ Every method may answer with a `Promise` or an `Observable` (its first value is 
    of the dashboard still works.
 3. **`FieldCatalog`**: `measurables()` (things to count, each with its own fields) and `commonFields()` (fields every
    measurable has). Labels are already in the user's language.
-4. **`DashboardAccess`**: `canCreate`, `canEdit(dashboard)`, `canShare(dashboard)`. The package hides what the user may
-   not do; the project's server must still refuse it.
+4. **`DashboardAccess`**: `canCreate`, `canEdit(dashboard)`, `canShare(dashboard)`, and optionally
+   `canRemove(dashboard)` (without it, those who may share may delete). The package hides what the user may not do;
+   the project's server must still refuse it. A built-in dashboard is never edited, shared or deleted, whatever these
+   answer: it is copied.
 5. **Extra widget types**: a `WidgetType` with a standalone component that takes one input, `view: WidgetView`. A
    project type with a built-in type's name replaces the built-in one.
 
@@ -96,5 +98,22 @@ values); a project maps its own design tokens onto them. The package's buttons a
 640 px the widgets stack in one column, in reading order.
 
 `<dash-board>` takes `[id]`, `[header]`, `[filterBar]`, `[filters]` / `(filtersChange)` (section 4) and
-`[startEditing]` (open in edit mode, for a dashboard just created). Content marked `dashActions` is shown in the
-header's row next to Edit when not editing, for the page's own actions such as sharing and deleting.
+`[startEditing]` (open in edit mode, for a dashboard just created). Beside the title it shows who can see the
+dashboard; in the header, **Share** and **More** (make a copy, delete) for those allowed (`[actions]="false"` hides
+them). It does not route: `(copied)` gives the copy (a page usually opens it to edit) and `(removed)` the deleted
+dashboard's id (a page goes back to its list). Content marked `dashActions` is shown in the header's row next to Edit
+when not editing, for the page's own actions.
+
+## 7. The list of dashboards
+
+`<dash-dashboard-list>` shows the dashboards `store.list()` answers, as cards: built-in first, then the most recently
+changed. The reader searches by name, description and owner, and shows all, shared or private. Each card has a menu
+with what the reader may do: open, edit, make a copy, share, delete. Those who may create have **New dashboard**
+(`[createButton]="false"` hides it, for a page with its own).
+
+The package does not route. `[link]` gives a dashboard's address (`(id) => '/dashboards/' + id`), so a card is a real
+link that opens in a new tab with Ctrl, Cmd or the middle button; a plain click, and Open or Edit in a card's menu,
+send `(open)` with `{ id, edit }` for the page to navigate. A dashboard just made opens with `edit: true`.
+
+New, copy, share and delete each open their own dialog (`DashboardActions`, also used by the board). The dialog calls
+the store and stays open with the reader's input when the store refuses, saying so; it closes only once it is done.
