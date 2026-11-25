@@ -101,7 +101,10 @@ export class Chart {
       tooltip: { trigger: 'axis', valueFormatter: (v: number) => this.i18n.number(v), textStyle: { fontFamily: font.fontFamily },
         backgroundColor: token('--dash-surface'), borderColor: line },
       xAxis: spec.horizontal ? values : categories,
-      yAxis: spec.horizontal ? { ...categories, inverse: true, position: rtl ? 'right' : 'left' } : values,
+      // A long bar label (an id, a hashed value) is cut short, so the bars keep their room; the tooltip shows it whole.
+      yAxis: spec.horizontal
+        ? { ...categories, inverse: true, position: rtl ? 'right' : 'left', axisLabel: { ...font, width: 140, overflow: 'truncate' } }
+        : values,
       series: spec.series.map((s) => spec.kind === 'line'
         ? { type: 'line', name: s.name, data: s.values, showSymbol: spec.buckets.length <= 31, symbolSize: 8,
             lineStyle: { width: 2 }, smooth: false }
