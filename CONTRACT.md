@@ -3,7 +3,8 @@
 What a project implements to use `@integralways/dashboards`, and what the package promises in return. Projects are
 reviewed against this file; behaviour that is not here is not promised.
 
-**Version 0.2 · 2026-11-25** (draft: changes freely until 1.0). 0.2 adds the optional `canRemove` and the list.
+**Version 0.3 · 2026-11-25** (draft: changes freely until 1.0). 0.3 adds `interval: 'auto'`; 0.2 the optional
+`canRemove` and the list.
 
 ## 1. Two entry points
 
@@ -59,7 +60,9 @@ New dashboards are **private**; the owner shares them with the workspace.
 
 A `QueryDocument` is one `measure` (`count`, `unique`, `sum` or `average` of a measurable, with a `field` for sum,
 average and unique), `where` conditions, and optionally `by` (split by a field, with a `limit`) or `interval` (split
-over time), and its own `period`.
+over time), and its own `period`. `interval: 'auto'` follows the period that applies (hours for up to 2 days, days up to
+3 months, weeks up to a year, else months); the package resolves it, so the data source only sees hour, day, week or
+month.
 
 The package runs `applyFilters(query, dashboard.filters)` before asking the data source: **both** the dashboard's and
 the widget's conditions apply, and the widget's own period wins over the dashboard's. A filter bar never removes a

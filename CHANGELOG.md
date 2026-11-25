@@ -3,6 +3,14 @@
 `@integralways/dashboards`. Each version is released once, from a tag named after it (`0.1.0`), with the package
 attached to the GitHub release. The contract a project implements is versioned separately in CONTRACT.md.
 
+## 0.4.0 · 25 November 2026
+
+Contract 0.3: `interval: 'auto'`.
+
+- **Automatic interval** for a Trend: hours for up to 2 days, days up to 3 months, weeks up to a year, else months,
+  following the period the reader picks in the filter bar. New Trends start with it. The package resolves it
+  (`autoInterval`), so a project's data source never sees 'auto'.
+
 ## 0.3.0 · 25 November 2026
 
 Phase 1, step 4: the list of dashboards and sharing in the package. Contract 0.2: `DashboardAccess.canRemove`
