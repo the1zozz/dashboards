@@ -10,6 +10,8 @@ Contract 0.3: `interval: 'auto'`.
 - **Automatic interval** for a Trend: hours for up to 2 days, days up to 3 months, weeks up to a year, else months,
   following the period the reader picks in the filter bar. New Trends start with it. The package resolves it
   (`autoInterval`), so a project's data source never sees 'auto'.
+- The board loads its dashboard again when the reader's language changes, as the list does: a project that translates
+  a built-in dashboard's texts shows them in the new language.
 
 ## 0.3.0 · 25 November 2026
 
