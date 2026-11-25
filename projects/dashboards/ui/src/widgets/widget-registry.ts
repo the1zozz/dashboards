@@ -8,7 +8,7 @@ import { TrendWidget } from './trend-widget/trend-widget';
 
 /** 24×24 icon paths (stroke) for the add-widget drawer. */
 const ICONS = {
-  number: 'M4 17V7l4 10V7M13 7h3a2 2 0 0 1 0 4h-3m0 0h3.5a2 2 0 0 1 0 4H13V7',
+  number: 'M10 4L8 20M16 4l-2 16M4 9h16M4 15h16',
   trend: 'M3 17l6-6 4 4 8-8M15 7h6v6',
   breakdown: 'M5 20V10M12 20V4M19 20v-7',
   table: 'M3 5h18v14H3zM3 10h18M3 15h18M9 5v14',

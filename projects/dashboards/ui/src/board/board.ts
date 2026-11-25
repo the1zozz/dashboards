@@ -1,6 +1,6 @@
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { Dialog } from '@angular/cdk/dialog';
-import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, input, linkedSignal, output, resource, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, ElementRef, inject, input, linkedSignal, output, resource, signal, untracked } from '@angular/core';
 import { Gridster, GridsterItem } from 'angular-gridster2';
 import {
   addWidget,
@@ -46,7 +46,8 @@ interface Item {
  * A dashboard: loaded from the project's store and laid out on a 12-column grid, mirrored in right-to-left languages,
  * one column on a phone. Those the project allows can edit it: add, build, move, resize, duplicate and remove widgets,
  * by mouse or keyboard, with Undo, then save. Above the grid, the filter bar: a reader's changes to it are theirs alone
- * (until Reset), an editor's are saved with the dashboard. Usage: {@code <dash-board [id]="dashboardId" />}.
+ * (until Reset), an editor's are saved with the dashboard. Usage: {@code <dash-board [id]="dashboardId" />}; the page's
+ * own actions (share, delete …) go in the header's row as content marked {@code dashActions}.
  */
 @Component({
   selector: 'dash-board',
@@ -61,6 +62,8 @@ export class Board {
   readonly id = input.required<string>();
   /** Show the name, description and edit toolbar above the grid. */
   readonly header = input(true);
+  /** Open in edit mode once loaded, when the reader may edit (a dashboard just created, say). */
+  readonly startEditing = input(false);
   /** Show the filter bar above the grid. */
   readonly filterBar = input(true);
   /**
@@ -111,6 +114,7 @@ export class Board {
     return !this.session.editing() && !!own && !!saved && !sameFilters(own, saved);
   });
 
+  private startedEditing = false;
   /** Asking "discard your changes?" after Cancel with unsaved changes. */
   protected readonly confirmingCancel = signal(false);
 
@@ -161,7 +165,23 @@ export class Board {
     return rows === 0 ? 0 : rows * (ROW_HEIGHT + GRID_GAP) - GRID_GAP;
   });
 
+  constructor() {
+    // Opened to edit: once, when the dashboard has loaded and the reader may edit it.
+    effect(() => {
+      if (this.startEditing() && this.canEdit() && !this.startedEditing) {
+        this.startedEditing = true;
+        untracked(() => this.edit());
+      }
+    });
+  }
+
   // ------------------------------------------------------------------ editing
+
+  /** From an empty dashboard, not yet in edit mode: edit it and choose the first widget. */
+  protected startWithWidget(): void {
+    this.edit();
+    this.addWidget();
+  }
 
   protected edit(): void {
     const d = this.dashboard.hasValue() ? this.dashboard.value() : undefined;

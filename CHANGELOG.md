@@ -13,6 +13,14 @@ Phase 1, step 3: the filter bar. Contract 0.1 (draft), no change to the model or
 - **`<dash-board [filters] (filtersChange)>`** for a page that keeps the reader's filters in its address; `[filterBar]`
   hides the bar.
 - A widget that keeps its own period shows it beside its title.
+- **Fits in a project's pages.** The package's buttons are plain classes now, not `:where()`: a project's reset
+  (`button { color: inherit; font-size: inherit }`) no longer turned a primary button into blue text on blue.
+  `--dash-text-title` sizes the dashboard's title to match the project's page titles.
+- **`<dash-board [startEditing]>`** opens in edit mode (a dashboard just created), and an empty dashboard offers
+  "Add widget" to those who may edit it. A page's own actions (share, delete) go in the header's row as content marked
+  `dashActions`.
+- The add-widget drawer shows the five types in one row, Number has a clearer icon, and a widget's own period reads
+  "Its own period: Last 30 days".
 - Core helpers: `PERIOD_PRESETS`, `datesPeriod`, `periodDays`, `periodRange`, `samePeriod`, `sameCondition`,
   `sameFilters`. Period words with the right Arabic plural forms.
 

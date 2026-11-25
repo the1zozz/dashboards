@@ -91,4 +91,10 @@ A `series` with no buckets or a `table` with no rows is shown as "No data for th
 
 English and Arabic are built in. In Arabic the grid, the time axis and the bars are mirrored and digits are
 Arabic-Indic. Every colour, size and font comes from a `--dash-*` CSS variable (`styles/theme.css`, with light and dark
-values); a project maps its own design tokens onto them. Below 640 px the widgets stack in one column, in reading order.
+values); a project maps its own design tokens onto them. The package's buttons are single classes (`.dash-button`,
+`.dash-link-button`, `.dash-icon-button`): they win over a project's element rules and lose to its class rules. Below
+640 px the widgets stack in one column, in reading order.
+
+`<dash-board>` takes `[id]`, `[header]`, `[filterBar]`, `[filters]` / `(filtersChange)` (section 4) and
+`[startEditing]` (open in edit mode, for a dashboard just created). Content marked `dashActions` is shown in the
+header's row next to Edit when not editing, for the page's own actions such as sharing and deleting.
