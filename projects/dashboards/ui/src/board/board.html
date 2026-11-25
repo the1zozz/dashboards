@@ -7,7 +7,10 @@
   @if (header()) {
     <header class="dash-board-head">
       <div class="dash-board-title">
-        <h2><bdi>{{ d.name }}</bdi></h2>
+        <div class="dash-board-name">
+          <h2><bdi>{{ d.name }}</bdi></h2>
+          <dash-visibility-badge [dashboard]="d" />
+        </div>
         @if (d.description) {<p><bdi>{{ d.description }}</bdi></p>}
       </div>
       <div class="dash-board-actions">
@@ -27,11 +30,38 @@
           }
         } @else {
           <ng-content select="[dashActions]" />
+          @if (actions() && saved(); as s) {
+            @if (can.canShare(s)) {
+              <button type="button" class="dash-button" (click)="share(s)">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21v-1a6 6 0 0 1 12 0v1M16 3.5a4 4 0 0 1 0 7M22 21v-1a6 6 0 0 0-4-5.6" /></svg>
+                {{ i18n.t('board.share') }}
+              </button>
+            }
+          }
           @if (canEdit()) {
             <button type="button" class="dash-button" (click)="edit()">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16zM14 6l4 4" /></svg>
               {{ i18n.t('board.edit') }}
             </button>
+          }
+          @if (actions() && saved(); as s) {
+            @if (can.canCreate() || can.canRemove(s)) {
+              <button type="button" class="dash-button dash-board-more" [cdkMenuTriggerFor]="more"
+                      [attr.aria-label]="i18n.t('board.more')" [title]="i18n.t('board.more')">
+                <svg class="dash-dots" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h.01M12 12h.01M18 12h.01" /></svg>
+              </button>
+              <ng-template #more>
+                <div class="dash-menu" cdkMenu [attr.dir]="i18n.dir()">
+                  @if (can.canCreate()) {
+                    <button type="button" class="dash-menu-item" cdkMenuItem (cdkMenuItemTriggered)="copy(s)">{{ i18n.t('list.copy') }}</button>
+                  }
+                  @if (can.canRemove(s)) {
+                    @if (can.canCreate()) {<hr class="dash-menu-line" />}
+                    <button type="button" class="dash-menu-item is-danger" cdkMenuItem (cdkMenuItemTriggered)="removeDashboard(s)">{{ i18n.t('list.delete') }}</button>
+                  }
+                </div>
+              </ng-template>
+            }
           }
         }
       </div>

@@ -54,6 +54,29 @@ export class DashI18n {
     return `${field?.label ?? condition.field} ${this.t('op.' + condition.op)} ${shown}`;
   }
 
+  /** How long ago, in words ("3 days ago", "yesterday"); the exact date and time is {@link dateTime}. */
+  ago(iso: string, now: number = Date.now()): string {
+    const seconds = (Date.parse(iso) - now) / 1000;
+    const steps: [Intl.RelativeTimeFormatUnit, number][] = [['second', 60], ['minute', 60], ['hour', 24], ['day', 7], ['week', 4.35], ['month', 12]];
+    let value = seconds;
+    let unit: Intl.RelativeTimeFormatUnit = 'year';
+    for (const [name, size] of steps) {
+      if (Math.abs(value) < size) {
+        unit = name;
+        break;
+      }
+      value /= size;
+    }
+    const format = new Intl.RelativeTimeFormat(this.locale(), { numeric: 'auto' });
+    // Under a minute is "now", not "in 3 seconds" when the clocks differ a little.
+    return unit === 'second' ? format.format(0, 'second') : format.format(Math.round(value), unit);
+  }
+
+  /** A date and time in full, in the reader's language and time zone. */
+  dateTime(iso: string): string {
+    return new Intl.DateTimeFormat(this.locale(), { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(iso));
+  }
+
   /** A change as a signed percentage, e.g. "+12%"; null when there is nothing to compare with. */
   change(value: number, previous: number | undefined): string | null {
     if (previous === undefined || previous === 0) {

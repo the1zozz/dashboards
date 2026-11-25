@@ -32,3 +32,12 @@ tokens onto the `--dash-*` variables (CONTRACT.md, section 6):
 `ng serve` reads `angular.json` only when it starts: restart it after adding the theme, or the dashboards draw with
 the browser's plain buttons and no spacing.
 
+The two components a project's pages use (CONTRACT.md, sections 6 and 7):
+
+```html
+<!-- The list page -->
+<dash-dashboard-list [link]="href" (open)="go($event)" />
+<!-- A dashboard's page -->
+<dash-board [id]="id" [startEditing]="edit" (copied)="openToEdit($event.id)" (removed)="backToList()" />
+```
+

@@ -3,6 +3,22 @@
 `@integralways/dashboards`. Each version is released once, from a tag named after it (`0.1.0`), with the package
 attached to the GitHub release. The contract a project implements is versioned separately in CONTRACT.md.
 
+## Unreleased
+
+Phase 1, step 4: the list of dashboards and sharing in the package. Contract 0.2: `DashboardAccess.canRemove`
+(optional) and the list (section 7).
+
+- **`<dash-dashboard-list>`**: the dashboards as cards with who can see them, owner and last change; search; all,
+  shared or private; New dashboard; and a menu per card (open, edit, make a copy, share, delete) showing only what the
+  reader may do. Loading, failed (with Try again), empty and no-match states.
+- **Dialogs** for a new dashboard, a copy, sharing (only you, or everyone in the workspace) and deleting (it says when
+  a shared dashboard is deleted for everyone). They call the store themselves and keep the reader's input when it
+  refuses. `DashboardActions` opens them, for a project's own buttons too.
+- **The board's header** shows who can see the dashboard beside its title, and Share and More (make a copy, delete)
+  for those allowed; `(copied)` and `(removed)` tell the page where to go.
+- A built-in dashboard is never edited, shared or deleted, whatever the project's access answers: it is copied.
+- `DashI18n.ago` ("3 days ago") and `dateTime`.
+
 ## 0.2.1 · 25 November 2026
 
 - **Long values no longer push numbers out of a widget.** A Table cuts long text short with an ellipsis (the whole

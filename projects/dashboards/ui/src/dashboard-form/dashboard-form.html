@@ -1,0 +1,40 @@
+<form class="dash-dialog" novalidate (submit)="$event.preventDefault(); submit()">
+  <header class="dash-dialog-head">
+    <h2 id="dash-form-title"><bdi>{{ copying ? i18n.t('form.titleCopy', { name: data.source!.name }) : i18n.t('form.titleNew') }}</bdi></h2>
+    <button type="button" class="dash-icon-button" [attr.aria-label]="i18n.t('add.close')" [title]="i18n.t('add.close')" (click)="close()">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+    </button>
+  </header>
+
+  <div class="dash-field">
+    <label for="dash-form-name">{{ i18n.t('form.name') }}</label>
+    <input id="dash-form-name" class="dash-input" autocomplete="off" [maxLength]="nameMax" [value]="name()"
+           [placeholder]="i18n.t('form.namePlaceholder')" [class.is-invalid]="tried() && nameMissing()"
+           [attr.aria-invalid]="tried() && nameMissing()" [attr.aria-describedby]="tried() && nameMissing() ? 'dash-form-name-error' : null"
+           (input)="name.set($any($event.target).value)" />
+    @if (tried() && nameMissing()) {
+      <p id="dash-form-name-error" class="dash-field-error">{{ i18n.t('form.nameRequired') }}</p>
+    }
+  </div>
+
+  @if (!copying) {
+    <div class="dash-field">
+      <label for="dash-form-description">{{ i18n.t('form.description') }} <span class="dash-field-optional">({{ i18n.t('form.optional') }})</span></label>
+      <textarea id="dash-form-description" class="dash-input" rows="2" [maxLength]="descriptionMax" [value]="description()"
+                (input)="description.set($any($event.target).value)"></textarea>
+    </div>
+  }
+
+  <p class="dash-dialog-note">{{ i18n.t(copying ? 'form.copyHint' : 'form.newHint') }}</p>
+
+  @if (failed()) {
+    <p class="dash-dialog-error" role="alert">{{ i18n.t('form.failed') }}</p>
+  }
+
+  <div class="dash-dialog-actions">
+    <button type="button" class="dash-button" (click)="close()">{{ i18n.t('form.cancel') }}</button>
+    <button type="submit" class="dash-button is-primary" [disabled]="busy()">
+      {{ busy() ? i18n.t('form.working') : i18n.t(copying ? 'form.makeCopy' : 'form.create') }}
+    </button>
+  </div>
+</form>

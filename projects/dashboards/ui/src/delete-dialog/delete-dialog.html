@@ -1,0 +1,18 @@
+<div class="dash-dialog" role="document">
+  <header class="dash-dialog-head">
+    <h2 id="dash-delete-title"><bdi>{{ i18n.t('delete.title', { name: dashboard.name }) }}</bdi></h2>
+  </header>
+  <p class="dash-dialog-text">{{ i18n.t(dashboard.visibility === 'workspace' ? 'delete.shared' : 'delete.text') }}</p>
+
+  @if (failed()) {
+    <p class="dash-dialog-error" role="alert">{{ i18n.t('delete.failed') }}</p>
+  }
+
+  <div class="dash-dialog-actions">
+    <!-- Cancel first and focused first: Enter on an opened "delete?" must not delete. -->
+    <button type="button" class="dash-button" (click)="close()">{{ i18n.t('form.cancel') }}</button>
+    <button type="button" class="dash-button is-danger" [disabled]="busy()" (click)="confirm()">
+      {{ i18n.t(busy() ? 'delete.working' : 'delete.confirm') }}
+    </button>
+  </div>
+</div>

@@ -5,6 +5,13 @@
 export { Board, GRID_COLUMNS, GRID_GAP, PHONE_WIDTH, ROW_HEIGHT } from './board/board';
 export { WidgetFrame } from './widget-frame/widget-frame';
 export { FilterBar } from './filter-bar/filter-bar';
+export { DashboardList, type DashboardOpen } from './dashboard-list/dashboard-list';
+export { DashboardCard, type CardOpen } from './dashboard-card/dashboard-card';
+export { DashboardActions } from './actions/dashboard-actions';
+export { DashboardForm, DESCRIPTION_MAX, NAME_MAX, type DashboardFormData } from './dashboard-form/dashboard-form';
+export { ShareDialog } from './share-dialog/share-dialog';
+export { DeleteDialog } from './delete-dialog/delete-dialog';
+export { VisibilityBadge } from './visibility-badge/visibility-badge';
 export { Chart, type ChartSpec } from './chart/chart';
 export { BUILT_IN_WIDGETS, WidgetRegistry } from './widgets/widget-registry';
 export { WidgetBuilder, type WidgetDraft } from './builder/widget-builder';

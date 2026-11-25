@@ -65,3 +65,16 @@
     outline-offset: 2px;
   }
 }
+
+.demo-back {
+  display: inline-block;
+  margin-block-end: var(--dash-space-3);
+  color: var(--dash-accent);
+  font-size: var(--dash-text-sm);
+  font-weight: 600;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

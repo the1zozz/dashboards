@@ -14,7 +14,15 @@
 <main class="demo-main">
   <!-- The board and its charts load in their own chunk, as on a lazy dashboards route in a real project. -->
   @defer (on immediate) {
-    <dash-board id="weekly-health" />
+    @if (opened(); as o) {
+      <a class="demo-back" href="#" (click)="$event.preventDefault(); show(null)">{{ t.back }}</a>
+      <!-- A new board for each dashboard: tracked by id, so going from one to a copy starts afresh. -->
+      @for (b of [o]; track b.id) {
+        <dash-board [id]="b.id" [startEditing]="b.edit" (removed)="show(null)" (copied)="openCopy($event)" />
+      }
+    } @else {
+      <dash-dashboard-list [link]="link" (open)="show($event)" />
+    }
   } @placeholder {
     <p class="demo-loading">…</p>
   }
