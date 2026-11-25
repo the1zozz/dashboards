@@ -39,6 +39,11 @@ export class WidgetFrame {
   private readonly registry = inject(WidgetRegistry);
 
   protected readonly type = computed(() => this.registry.get(this.widget().type));
+  /** The widget's own period in words, when it keeps one: the filter bar's period does not reach it. */
+  protected readonly ownPeriod = computed(() => {
+    const period = this.widget().query?.period;
+    return period ? this.i18n.period(period) : null;
+  });
 
   /**
    * What to ask the data source. Compared by content, so a change that does not touch the query (a new title while

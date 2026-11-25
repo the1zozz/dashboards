@@ -3,6 +3,27 @@
 `@integralways/dashboards`. Each version is released once, from a tag named after it (`0.1.0`), with the package
 attached to the GitHub release. The contract a project implements is versioned separately in CONTRACT.md.
 
+## Unreleased
+
+Phase 1, step 3: the filter bar. Contract 0.1 (draft), no change to the model or the plug-ins.
+
+- **Filter bar** above the grid: the period (last 24 hours, 7, 30 or 90 days, 12 months, or fixed dates), the
+  comparison with the previous period, and conditions on the catalog's common fields as chips. A reader's changes are
+  theirs alone, with Reset; an editor's are saved with the dashboard and undone with Undo.
+- **`<dash-board [filters] (filtersChange)>`** for a page that keeps the reader's filters in its address; `[filterBar]`
+  hides the bar.
+- A widget that keeps its own period shows it beside its title.
+- **Fits in a project's pages.** The package's buttons are plain classes now, not `:where()`: a project's reset
+  (`button { color: inherit; font-size: inherit }`) no longer turned a primary button into blue text on blue.
+  `--dash-text-title` sizes the dashboard's title to match the project's page titles.
+- **`<dash-board [startEditing]>`** opens in edit mode (a dashboard just created), and an empty dashboard offers
+  "Add widget" to those who may edit it. A page's own actions (share, delete) go in the header's row as content marked
+  `dashActions`.
+- The add-widget drawer shows the five types in one row, Number has a clearer icon, and a widget's own period reads
+  "Its own period: Last 30 days".
+- Core helpers: `PERIOD_PRESETS`, `datesPeriod`, `periodDays`, `periodRange`, `samePeriod`, `sameCondition`,
+  `sameFilters`. Period words with the right Arabic plural forms.
+
 ## 0.1.0 · 24 November 2026
 
 The first release: Phase 1 of the dashboards plan, steps 1 and 2. Contract 0.1 (draft).

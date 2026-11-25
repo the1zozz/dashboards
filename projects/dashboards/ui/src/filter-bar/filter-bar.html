@@ -1,0 +1,88 @@
+<div class="dash-filters" role="group" [attr.aria-label]="i18n.t('filters.label')">
+  <dash-select class="dash-filter-period" [options]="periodOptions()" [value]="periodValue()" [label]="i18n.t('filters.period')"
+               (valueChange)="choosePeriod($event)" />
+
+  @if (custom()) {
+    <div class="dash-filter-dates">
+      <input class="dash-filter-input" type="date" [value]="days().first" [attr.aria-label]="i18n.t('filters.from')"
+             [class.is-invalid]="datesInvalid()" [attr.aria-invalid]="datesInvalid()" (change)="setDay('first', $any($event.target).value)" />
+      <span aria-hidden="true">–</span>
+      <input class="dash-filter-input" type="date" [value]="days().last" [attr.aria-label]="i18n.t('filters.to')"
+             [class.is-invalid]="datesInvalid()" [attr.aria-invalid]="datesInvalid()" (change)="setDay('last', $any($event.target).value)" />
+    </div>
+  }
+
+  <button type="button" class="dash-filter-toggle" [attr.aria-pressed]="filters().compare === 'previous'" (click)="toggleCompare()">
+    <span class="dash-filter-check" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path d="M5 12l5 5 9-10" /></svg>
+    </span>
+    {{ i18n.t('filters.compare') }}
+  </button>
+
+  @for (label of chips(); track $index; let i = $index) {
+    <span class="dash-chip">
+      <button type="button" class="dash-chip-label" cdkOverlayOrigin #chip="cdkOverlayOrigin"
+              [attr.aria-label]="i18n.t('filters.edit', { label })" (click)="openExisting(i, chip)"><bdi>{{ label }}</bdi></button>
+      <button type="button" class="dash-chip-remove" [attr.aria-label]="i18n.t('filters.remove', { label })"
+              [title]="i18n.t('filters.remove', { label })" (click)="removeCondition(i)">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+      </button>
+    </span>
+  }
+
+  @if (fieldList().length > 0) {
+    <button #add type="button" class="dash-link-button dash-filter-add" cdkOverlayOrigin #addOrigin="cdkOverlayOrigin"
+            aria-haspopup="dialog" [attr.aria-expanded]="draft()?.index === null" (click)="openNew(addOrigin)">
+      + {{ i18n.t('filters.add') }}
+    </button>
+  }
+
+  @if (changed() && !editing()) {
+    <span class="dash-filter-note">
+      {{ i18n.t('filters.notSaved') }}
+      <button type="button" class="dash-link-button" (click)="resetAll()">{{ i18n.t('filters.reset') }}</button>
+    </span>
+  } @else if (editing()) {
+    <span class="dash-filter-note">{{ i18n.t('filters.saved') }}</span>
+  }
+</div>
+@if (datesInvalid()) {
+  <p class="dash-filter-error" role="alert">{{ i18n.t('filters.datesInvalid') }}</p>
+}
+
+@if (anchor(); as origin) {
+  <ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="origin" [cdkConnectedOverlayOpen]="!!draft()"
+               [cdkConnectedOverlayPositions]="positions" (overlayOutsideClick)="closePanel()" (detach)="draft.set(null)"
+               (overlayKeydown)="$event.key === 'Escape' && closePanel()" (attach)="focusPanel()">
+    @if (draft(); as d) {
+      <form #panel class="dash-filter-panel" role="dialog" [attr.dir]="i18n.dir()" [attr.aria-label]="i18n.t('filters.add')"
+            (submit)="$event.preventDefault(); apply()">
+        <div class="dash-filter-field">
+          <span aria-hidden="true">{{ i18n.t('filters.field') }}</span>
+          <dash-select [options]="fieldOptions()" [value]="d.field" [label]="i18n.t('filters.field')"
+                       (valueChange)="setDraft({ field: $event })" />
+        </div>
+        <div class="dash-filter-field">
+          <span aria-hidden="true">{{ i18n.t('filters.op') }}</span>
+          <dash-select [options]="opOptions()" [value]="d.op" [label]="i18n.t('filters.op')"
+                       (valueChange)="setDraft({ op: $any($event) })" />
+        </div>
+        <div class="dash-filter-field">
+          <span aria-hidden="true">{{ i18n.t('filters.value') }}</span>
+          @if (valueOptions(); as options) {
+            <dash-select [options]="options" [value]="d.value || null" [label]="i18n.t('filters.value')" [invalid]="draftInvalid()"
+                         (valueChange)="setDraft({ value: $event ?? '' })" />
+          } @else {
+            <input class="dash-filter-input" [type]="draftField()?.type === 'number' ? 'number' : 'text'" [value]="d.value"
+                   [class.is-invalid]="draftInvalid()" [attr.aria-invalid]="draftInvalid()" [attr.aria-label]="i18n.t('filters.value')"
+                   (input)="setDraft({ value: $any($event.target).value })" />
+          }
+        </div>
+        <div class="dash-filter-actions">
+          <button type="button" class="dash-button" (click)="closePanel()">{{ i18n.t('filters.cancel') }}</button>
+          <button type="submit" class="dash-button is-primary">{{ i18n.t('filters.apply') }}</button>
+        </div>
+      </form>
+    }
+  </ng-template>
+}

@@ -4,13 +4,14 @@
  *
  *   :root { --dash-accent: var(--brand-primary); --dash-surface: var(--card-bg); ... }
  *
- * The defaults use :where() so any rule of the project wins. Dark values apply under [data-theme='dark'] or .dark on
+ * The variables' defaults use :where() so any rule of the project wins. Dark values apply under [data-theme='dark'] or .dark on
  * the page, or the reader's system setting when the page names no theme.
  */
 :where(:root) {
   --dash-font: 'IBM Plex Sans', 'Noto Sans Arabic', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --dash-font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
   --dash-text-sm: 0.8125rem;
+  --dash-text-title: 1.25rem;
   --dash-text-figure: 2rem;
   --dash-space-1: 4px;
   --dash-space-2: 8px;
@@ -89,10 +90,11 @@
 }
 
 /*
- * The package's buttons, shared by every component (the board, a widget, the builder, dialogs). Low specificity:
- * a project restyles them through the variables above.
+ * The package's buttons, shared by every component (the board, a widget, the builder, dialogs). One class each, so
+ * they win over a project's element rules (a reset's `button { color: inherit; font-size: inherit }`) and lose to any
+ * of its class rules. A project restyles them through the variables above.
  */
-:where(.dash-button) {
+.dash-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -110,38 +112,38 @@
   cursor: pointer;
 }
 
-:where(.dash-button:hover:not(:disabled)) {
+.dash-button:hover:not(:disabled) {
   border-color: var(--dash-accent);
 }
 
-:where(.dash-button.is-primary) {
+.dash-button.is-primary {
   border-color: var(--dash-accent);
   background: var(--dash-accent);
   color: var(--dash-accent-ink);
 }
 
-:where(.dash-button.is-primary:hover:not(:disabled)) {
+.dash-button.is-primary:hover:not(:disabled) {
   filter: brightness(1.08);
 }
 
-:where(.dash-button.is-quiet) {
+.dash-button.is-quiet {
   border-color: transparent;
   background: transparent;
   color: var(--dash-accent);
 }
 
-:where(.dash-button.is-danger) {
+.dash-button.is-danger {
   border-color: var(--dash-bad);
   background: var(--dash-bad);
   color: var(--dash-accent-ink);
 }
 
-:where(.dash-button:disabled) {
+.dash-button:disabled {
   opacity: 0.55;
   cursor: not-allowed;
 }
 
-:where(.dash-link-button) {
+.dash-link-button {
   align-self: flex-start;
   padding: var(--dash-space-1) var(--dash-space-2);
   border: 0;
@@ -154,11 +156,11 @@
   cursor: pointer;
 }
 
-:where(.dash-link-button:hover) {
+.dash-link-button:hover {
   background: var(--dash-accent-soft);
 }
 
-:where(.dash-icon-button) {
+.dash-icon-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -172,12 +174,12 @@
   cursor: pointer;
 }
 
-:where(.dash-icon-button:hover) {
+.dash-icon-button:hover {
   background: var(--dash-accent-soft);
   color: var(--dash-accent);
 }
 
-:where(.dash-icon-button svg) {
+.dash-icon-button svg {
   inline-size: 18px;
   block-size: 18px;
   fill: none;
@@ -187,7 +189,7 @@
   stroke-linejoin: round;
 }
 
-:where(.dash-button, .dash-link-button, .dash-icon-button):focus-visible {
+.dash-button:focus-visible, .dash-link-button:focus-visible, .dash-icon-button:focus-visible {
   outline: 2px solid var(--dash-accent);
   outline-offset: 2px;
 }

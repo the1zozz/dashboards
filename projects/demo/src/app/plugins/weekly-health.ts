@@ -26,7 +26,7 @@ export const WEEKLY_HEALTH: Dashboard = {
       position: { x: 8, y: 2, w: 4, h: 4 } },
     { id: 'w7', type: 'breakdown', title: 'Sign-ups by country', query: { measure: { aggregate: 'count', of: 'sign_up' }, where: [], by: 'country', limit: 6 },
       settings: {}, position: { x: 0, y: 6, w: 4, h: 4 } },
-    { id: 'w8', type: 'table', title: 'Visits by channel', query: { measure: { aggregate: 'count', of: 'visit' }, where: [], by: 'channel' },
+    { id: 'w8', type: 'table', title: 'Visits by channel', query: { measure: { aggregate: 'count', of: 'visit' }, where: [], by: 'channel', period: { last: 90, unit: 'day' } },
       settings: {}, position: { x: 4, y: 6, w: 4, h: 4 } },
     { id: 'w9', type: 'number', title: 'Invoices paid', query: { measure: { aggregate: 'sum', of: 'invoice.paid', field: 'amount' }, where: [] },
       settings: { unit: 'USD' }, position: { x: 8, y: 6, w: 4, h: 4 } },

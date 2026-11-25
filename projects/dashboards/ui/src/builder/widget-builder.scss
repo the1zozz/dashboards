@@ -149,6 +149,12 @@
   .is-unit {
     inline-size: 130px;
   }
+
+  .dash-period-last {
+    margin-inline-start: var(--dash-space-2);
+    font-size: var(--dash-text-sm);
+    color: var(--dash-muted);
+  }
 }
 
 .dash-problem {

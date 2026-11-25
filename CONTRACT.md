@@ -63,6 +63,19 @@ The package runs `applyFilters(query, dashboard.filters)` before asking the data
 the widget's conditions apply, and the widget's own period wins over the dashboard's. A filter bar never removes a
 condition a widget has.
 
+**The filter bar** above the grid holds the dashboard's period (a preset such as the last 7 days, or fixed dates), the
+comparison with the period before, and conditions on the catalog's **common fields** (only those apply to every
+widget). A widget with its own period says so beside its title. Who changes it decides what happens:
+
+- **A reader** changes only what they see. Nothing is saved; "Reset" brings back the saved filters. A page that wants
+  the reader's filters in its address binds `<dash-board [filters]="…" (filtersChange)="…">`: `filtersChange` sends the
+  reader's filters, or `undefined` when they are back to the saved ones.
+- **An editor** (edit mode) changes the filters saved with the dashboard, with Undo like every other change.
+
+Fixed dates are whole UTC days: the first day at 00:00 to the day after the last at 00:00 (`from` inclusive, `to`
+exclusive), the days a project's time buckets use. The data source receives the period as given and enforces its own
+longest period.
+
 ## 5. Results
 
 | `kind` | Shape | Drawn by |
@@ -78,4 +91,10 @@ A `series` with no buckets or a `table` with no rows is shown as "No data for th
 
 English and Arabic are built in. In Arabic the grid, the time axis and the bars are mirrored and digits are
 Arabic-Indic. Every colour, size and font comes from a `--dash-*` CSS variable (`styles/theme.css`, with light and dark
-values); a project maps its own design tokens onto them. Below 640 px the widgets stack in one column, in reading order.
+values); a project maps its own design tokens onto them. The package's buttons are single classes (`.dash-button`,
+`.dash-link-button`, `.dash-icon-button`): they win over a project's element rules and lose to its class rules. Below
+640 px the widgets stack in one column, in reading order.
+
+`<dash-board>` takes `[id]`, `[header]`, `[filterBar]`, `[filters]` / `(filtersChange)` (section 4) and
+`[startEditing]` (open in edit mode, for a dashboard just created). Content marked `dashActions` is shown in the
+header's row next to Edit when not editing, for the page's own actions such as sharing and deleting.
