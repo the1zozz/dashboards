@@ -1,6 +1,6 @@
 import { computed, EnvironmentInjector, inject, Injectable, runInInjectionContext } from '@angular/core';
-import { DASHBOARD_LANGUAGE } from '@integralways/dashboards';
-import { Language, MESSAGES, MessageKey } from './messages';
+import { Condition, DASHBOARD_LANGUAGE, Field, Period } from '@integralways/dashboards';
+import { LAST_PERIOD, Language, MESSAGES, MessageKey } from './messages';
 
 /**
  * The language the package shows, followed live: when the project's language function reads a signal, a language
@@ -29,6 +29,29 @@ export class DashI18n {
 
   number(value: number, options?: Intl.NumberFormatOptions): string {
     return new Intl.NumberFormat(this.locale(), { maximumFractionDigits: 2, ...options }).format(value);
+  }
+
+  /** A period in words: "Last 7 days", or the dates it covers ("1–7 Nov 2026"), both days included. */
+  period(period: Period): string {
+    if ('last' in period) {
+      const forms = LAST_PERIOD[this.language()][period.unit];
+      const form = new Intl.PluralRules(this.locale()).select(period.last);
+      return (forms[form] ?? forms.other).replace('{n}', this.number(period.last));
+    }
+    const from = new Date(period.from);
+    // The period ends at the start of the day after its last day.
+    const last = new Date(Math.max(from.getTime(), Date.parse(period.to) - 1));
+    const format = new Intl.DateTimeFormat(this.locale(), { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
+    return format.formatRange(from, last);
+  }
+
+  /** A condition in words, with the field's label when the catalog has one: "Country is EG". */
+  condition(condition: Condition, fields: Field[] = []): string {
+    const field = fields.find((f) => f.name === condition.field);
+    const value = Array.isArray(condition.value) ? condition.value.join(', ') : condition.value;
+    const shown = field?.type === 'boolean' ? this.t(value === 'true' || value === 1 ? 'filters.yes' : 'filters.no')
+      : typeof value === 'number' ? this.number(value) : value;
+    return `${field?.label ?? condition.field} ${this.t('op.' + condition.op)} ${shown}`;
   }
 
   /** A change as a signed percentage, e.g. "+12%"; null when there is nothing to compare with. */

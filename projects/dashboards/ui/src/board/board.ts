@@ -1,6 +1,6 @@
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { Dialog } from '@angular/cdk/dialog';
-import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, input, resource, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, input, linkedSignal, output, resource, signal } from '@angular/core';
 import { Gridster, GridsterItem } from 'angular-gridster2';
 import {
   addWidget,
@@ -8,15 +8,18 @@ import {
   COLUMNS,
   Dashboard,
   DASHBOARD_ACCESS,
+  DashboardFilters,
   DASHBOARD_STORE,
   duplicateWidget,
   GridPosition,
   nudge,
   removeWidget,
+  sameFilters,
   settle,
   updateWidget,
   Widget,
 } from '@integralways/dashboards';
+import { FilterBar } from '../filter-bar/filter-bar';
 import { DashI18n } from '../i18n/dash-i18n';
 import { WidgetDraft } from '../builder/widget-builder';
 import { WidgetDialog, WidgetDialogData } from '../widget-dialog/widget-dialog';
@@ -42,11 +45,12 @@ interface Item {
 /**
  * A dashboard: loaded from the project's store and laid out on a 12-column grid, mirrored in right-to-left languages,
  * one column on a phone. Those the project allows can edit it: add, build, move, resize, duplicate and remove widgets,
- * by mouse or keyboard, with Undo, then save. Usage: {@code <dash-board [id]="dashboardId" />}.
+ * by mouse or keyboard, with Undo, then save. Above the grid, the filter bar: a reader's changes to it are theirs alone
+ * (until Reset), an editor's are saved with the dashboard. Usage: {@code <dash-board [id]="dashboardId" />}.
  */
 @Component({
   selector: 'dash-board',
-  imports: [Gridster, GridsterItem, WidgetFrame],
+  imports: [Gridster, GridsterItem, WidgetFrame, FilterBar],
   providers: [EditSession],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './board.html',
@@ -57,6 +61,15 @@ export class Board {
   readonly id = input.required<string>();
   /** Show the name, description and edit toolbar above the grid. */
   readonly header = input(true);
+  /** Show the filter bar above the grid. */
+  readonly filterBar = input(true);
+  /**
+   * The filters to show instead of the saved ones, e.g. read from the page's address; undefined shows the saved ones.
+   * Not saved: the reader's own view, as their changes in the bar are.
+   */
+  readonly filters = input<DashboardFilters | undefined>(undefined);
+  /** The reader changed the filters (the page may keep them in its address); undefined when back to the saved ones. */
+  readonly filtersChange = output<DashboardFilters | undefined>();
 
   protected readonly i18n = inject(DashI18n);
   protected readonly session = inject(EditSession);
@@ -72,6 +85,9 @@ export class Board {
     loader: ({ params }) => settle<Dashboard>(this.store.get(params)),
   });
 
+  /** The reader's own filters, when they changed the bar (or the page gave some): never saved. */
+  private readonly viewFilters = linkedSignal<DashboardFilters | undefined>(() => this.filters());
+
   /** What the grid shows: the working copy while editing, else the saved dashboard. */
   protected readonly shown = computed<Dashboard | undefined>(() =>
     this.session.draft() ?? (this.dashboard.hasValue() ? this.dashboard.value() : undefined));
@@ -79,6 +95,22 @@ export class Board {
     const d = this.dashboard.hasValue() ? this.dashboard.value() : undefined;
     return !!d && this.access.canEdit(d);
   });
+  /** The filters every widget gets now: the working copy's while editing, else the reader's, else the saved ones. */
+  protected readonly activeFilters = computed<DashboardFilters | undefined>(() => {
+    const draft = this.session.draft();
+    if (draft) {
+      return draft.filters;
+    }
+    const saved = this.shown()?.filters;
+    return this.viewFilters() ?? saved;
+  });
+  /** The reader's filters differ from the saved ones. */
+  protected readonly filtersChanged = computed(() => {
+    const own = this.viewFilters();
+    const saved = this.shown()?.filters;
+    return !this.session.editing() && !!own && !!saved && !sameFilters(own, saved);
+  });
+
   /** Asking "discard your changes?" after Cancel with unsaved changes. */
   protected readonly confirmingCancel = signal(false);
 
@@ -134,7 +166,27 @@ export class Board {
   protected edit(): void {
     const d = this.dashboard.hasValue() ? this.dashboard.value() : undefined;
     if (d) {
+      // The editor edits the saved filters: their own view would otherwise be saved without them noticing.
+      this.resetFilters();
       this.session.start(d);
+    }
+  }
+
+  /** A change in the filter bar: saved with the dashboard while editing, else the reader's own view. */
+  protected setFilters(filters: DashboardFilters): void {
+    if (this.session.editing()) {
+      this.session.apply((d) => ({ ...d, filters }));
+      return;
+    }
+    this.viewFilters.set(filters);
+    this.filtersChange.emit(filters);
+  }
+
+  /** Back to the filters saved with the dashboard. */
+  protected resetFilters(): void {
+    if (this.viewFilters() !== undefined) {
+      this.viewFilters.set(undefined);
+      this.filtersChange.emit(undefined);
     }
   }
 
@@ -162,14 +214,14 @@ export class Board {
   }
 
   protected addWidget(): void {
-    this.openDialog({ filters: this.shown()!.filters }, (draft) => {
+    this.openDialog({ filters: this.activeFilters()! }, (draft) => {
       const size = this.registry.get(draft.type)?.defaultSize ?? { w: 4, h: 3 };
       this.session.apply((d) => addWidget(d, draft, size));
     });
   }
 
   protected editWidget(widget: Widget): void {
-    this.openDialog({ filters: this.shown()!.filters, widget }, (draft) =>
+    this.openDialog({ filters: this.activeFilters()!, widget }, (draft) =>
       this.session.apply((d) => updateWidget(d, widget.id, { title: draft.title, settings: draft.settings, query: draft.query })));
   }
 

@@ -63,6 +63,19 @@ The package runs `applyFilters(query, dashboard.filters)` before asking the data
 the widget's conditions apply, and the widget's own period wins over the dashboard's. A filter bar never removes a
 condition a widget has.
 
+**The filter bar** above the grid holds the dashboard's period (a preset such as the last 7 days, or fixed dates), the
+comparison with the period before, and conditions on the catalog's **common fields** (only those apply to every
+widget). A widget with its own period says so beside its title. Who changes it decides what happens:
+
+- **A reader** changes only what they see. Nothing is saved; "Reset" brings back the saved filters. A page that wants
+  the reader's filters in its address binds `<dash-board [filters]="…" (filtersChange)="…">`: `filtersChange` sends the
+  reader's filters, or `undefined` when they are back to the saved ones.
+- **An editor** (edit mode) changes the filters saved with the dashboard, with Undo like every other change.
+
+Fixed dates are whole UTC days: the first day at 00:00 to the day after the last at 00:00 (`from` inclusive, `to`
+exclusive), the days a project's time buckets use. The data source receives the period as given and enforces its own
+longest period.
+
 ## 5. Results
 
 | `kind` | Shape | Drawn by |

@@ -77,6 +77,32 @@
   text-overflow: ellipsis;
 }
 
+/* The title, and the widget's own period when it keeps one. */
+.dash-frame-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--dash-space-2);
+  min-inline-size: 0;
+  margin-block-end: var(--dash-space-3);
+
+  .dash-frame-title {
+    flex: 1;
+    min-inline-size: 0;
+    margin: 0;
+  }
+}
+
+.dash-frame-period {
+  flex: none;
+  margin-inline-start: auto;
+  padding: 2px var(--dash-space-2);
+  border-radius: 999px;
+  background: var(--dash-page-soft);
+  font-size: 0.75rem;
+  color: var(--dash-muted);
+  white-space: nowrap;
+}
+
 .dash-frame-body {
   position: relative;
   flex: 1;

@@ -3,6 +3,7 @@
     <div class="dash-frame-bar dash-drag-handle">
       <svg class="dash-grip" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h.01M15 6h.01M9 12h.01M15 12h.01M9 18h.01M15 18h.01" /></svg>
       <h3 class="dash-frame-title"><bdi>{{ widget().title }}</bdi></h3>
+      @if (ownPeriod(); as period) {<span class="dash-frame-period" [title]="i18n.t('widget.ownPeriod')">{{ period }}</span>}
       <div class="dash-frame-tools">
         <button type="button" class="dash-icon-button" [attr.aria-label]="i18n.t('widget.edit') + ': ' + widget().title"
                 [title]="i18n.t('widget.edit')" (click)="edit.emit()">
@@ -18,8 +19,15 @@
         </button>
       </div>
     </div>
-  } @else if (widget().title) {
-    <h3 class="dash-frame-title"><bdi>{{ widget().title }}</bdi></h3>
+  } @else if (widget().title || ownPeriod()) {
+    <div class="dash-frame-head">
+      @if (widget().title) {<h3 class="dash-frame-title"><bdi>{{ widget().title }}</bdi></h3>}
+      @if (ownPeriod(); as period) {
+        <span class="dash-frame-period" [title]="i18n.t('widget.ownPeriod')">
+          {{ period }}<span class="dash-visually-hidden">. {{ i18n.t('widget.ownPeriod') }}</span>
+        </span>
+      }
+    </div>
   }
   <div class="dash-frame-body">
     @switch (state()) {

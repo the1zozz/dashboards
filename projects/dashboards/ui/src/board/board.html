@@ -47,6 +47,11 @@
     <p class="dash-board-hint">{{ i18n.t('board.editHint') }}</p>
   }
 
+  @if (filterBar() && activeFilters() && (d.widgets.length > 0 || session.editing())) {
+    <dash-filter-bar [filters]="activeFilters()!" [changed]="filtersChanged()" [editing]="session.editing()"
+                     (filtersChange)="setFilters($event)" (reset)="resetFilters()" />
+  }
+
   @if (d.widgets.length === 0) {
     <div class="dash-board-state">
       <p>{{ i18n.t(session.editing() ? 'board.emptyEdit' : 'board.empty') }}</p>
@@ -58,7 +63,7 @@
     <gridster [options]="options()" class="dash-grid" [class.is-editing]="session.editing()" [style.--dash-grid-height.px]="height()">
       @for (item of items(); track item.widget.id) {
         <gridster-item [item]="item.cell">
-          <dash-widget-frame [attr.data-widget]="item.widget.id" [widget]="item.widget" [filters]="d.filters" [editing]="session.editing()"
+          <dash-widget-frame [attr.data-widget]="item.widget.id" [widget]="item.widget" [filters]="activeFilters()!" [editing]="session.editing()"
                              (edit)="editWidget(item.widget)" (duplicate)="duplicate(item.widget)" (remove)="remove(item.widget)"
                              (nudge)="nudge(item.widget, $event)" />
         </gridster-item>
