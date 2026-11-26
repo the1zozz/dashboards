@@ -19,7 +19,7 @@ export const WEEKLY_HEALTH: Dashboard = {
       settings: {}, position: { x: 6, y: 0, w: 3, h: 2 } },
     { id: 'w4', type: 'number', title: 'Errors', query: { measure: { aggregate: 'count', of: 'error' }, where: [] },
       settings: { higherIsBetter: false }, position: { x: 9, y: 0, w: 3, h: 2 } },
-    { id: 'w5', type: 'trend', title: 'Visits per day', query: { measure: { aggregate: 'count', of: 'visit' }, where: [], interval: 'day' },
+    { id: 'w5', type: 'trend', title: 'Visits over time', query: { measure: { aggregate: 'count', of: 'visit' }, where: [], interval: 'auto' },
       settings: {}, position: { x: 0, y: 2, w: 8, h: 4 } },
     { id: 'w6', type: 'note', title: 'About this dashboard', settings: {
       text: 'Made-up numbers from the demo app: no server and no Observa code.\n\nThe top row compares this week with the previous one. Errors going down shows as good.' },

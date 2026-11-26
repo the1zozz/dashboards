@@ -24,7 +24,7 @@ type Split = 'none' | 'time' | 'field';
 
 const SPLIT: Record<string, Split> = { number: 'none', trend: 'time', breakdown: 'field', table: 'field' };
 const AGGREGATES: Measure['aggregate'][] = ['count', 'unique', 'sum', 'average'];
-const INTERVALS: NonNullable<QueryDocument['interval']>[] = ['hour', 'day', 'week', 'month'];
+const INTERVALS: NonNullable<QueryDocument['interval']>[] = ['auto', 'hour', 'day', 'week', 'month'];
 const UNITS = ['hour', 'day', 'week', 'month'] as const;
 const OPS: Condition['op'][] = ['eq', 'neq', 'contains', 'gt', 'lt'];
 
@@ -230,7 +230,7 @@ export class WidgetBuilder {
     }
     const split = SPLIT[type.type] ?? 'none';
     const query: QueryDocument = { measure: { aggregate: 'count', of: '' }, where: [] };
-    if (split === 'time') query.interval = 'day';
+    if (split === 'time') query.interval = 'auto';
     if (split === 'field') query.limit = 10;
     return { type: type.type, title: '', settings: {}, query };
   }

@@ -93,9 +93,10 @@ export class Board {
   private readonly announcer = inject(LiveAnnouncer);
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
 
+  /** Loaded again in the reader's language when it changes: a project may translate a built-in dashboard's texts. */
   protected readonly dashboard = resource({
-    params: () => this.id(),
-    loader: ({ params }) => settle<Dashboard>(this.store.get(params)),
+    params: () => ({ id: this.id(), language: this.i18n.language() }),
+    loader: ({ params }) => settle<Dashboard>(this.store.get(params.id)),
   });
 
   /** The reader's own filters, when they changed the bar (or the page gave some): never saved. */

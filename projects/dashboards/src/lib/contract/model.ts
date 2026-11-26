@@ -68,8 +68,11 @@ export interface QueryDocument {
   where: Condition[];
   /** Split the measure by one field (Breakdown, Table). */
   by?: string;
-  /** Split it over time (Trend). */
-  interval?: 'hour' | 'day' | 'week' | 'month';
+  /**
+   * Split it over time (Trend). 'auto' follows the period: hours for up to 2 days, days up to 3 months, weeks up to a
+   * year, else months. The package resolves it before asking the data source, which never sees 'auto'.
+   */
+  interval?: 'auto' | 'hour' | 'day' | 'week' | 'month';
   /** Most rows to return when split by a field; the project may cap it lower. */
   limit?: number;
   /** The widget's own period; when absent the dashboard's applies. */
